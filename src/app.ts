@@ -3,15 +3,21 @@ import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 
-const app = express();
+import {
+  authenticationRouter
+} from "@/Routers"
 
+const app = express();
 
 app.use(express.json());
 app.use(cors());
 
+app
+  .get("/status", (req, res) => res.send("OK! Server is up"))
+  .use("/auth", authenticationRouter)
 
-app.get("/status", (req, res) => res.send("OK!"))
+const port = process.env.PORT || 4000;
 
-app.listen(process.env.PORT, () => {
-  console.log(`Listening on port ${process.env.PORT}`);
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
 });
