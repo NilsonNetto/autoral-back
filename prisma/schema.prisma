@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model items {
+  id         Int          @id @default(autoincrement())
+  name       String       @db.VarChar(255)
+  complement String?      @db.VarChar(255)
+  createdAt  DateTime     @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime?    @db.Timestamp(6)
+  listsItems listsItems[]
+}
+
+model lists {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(255)
+  complement  String?       @db.VarChar(255)
+  status      listStatus    @default(open)
+  createdAt   DateTime      @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime?     @db.Timestamp(6)
+  listsItems  listsItems[]
+  listsLocals listsLocals[]
+  usersLists  usersLists[]
+}
+
+model listsItems {
+  id        Int        @id @default(autoincrement())
+  listId    Int
+  localId   Int
+  itemId    Int
+  status    itemStatus @default(uncheck)
+  quantity  Int?
+  unit      Int?
+  createdAt DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt DateTime?  @db.Timestamp(6)
+  items     items      @relation(fields: [itemId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  lists     lists      @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  locals    locals     @relation(fields: [localId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model listsLocals {
+  id        Int       @id @default(autoincrement())
+  listId    Int
+  localId   Int
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime? @db.Timestamp(6)
+  lists     lists     @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  locals    locals    @relation(fields: [localId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model locals {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(255)
+  complement  String?       @db.VarChar(255)
+  createdAt   DateTime      @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime?     @db.Timestamp(6)
+  listsItems  listsItems[]
+  listsLocals listsLocals[]
+}
+
+model sessions {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  token     String
+  valid     Boolean   @default(true)
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime? @db.Timestamp(6)
+  users     users     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model users {
+  id             Int          @id @default(autoincrement())
+  email          String       @unique @db.VarChar(255)
+  password       String
+  name           String       @db.VarChar(255)
+  username       String       @unique @db.VarChar(255)
+  profilePicture String?
+  createdAt      DateTime     @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime?    @db.Timestamp(6)
+  sessions       sessions[]
+  usersLists     usersLists[]
+}
+
+model usersLists {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  listId    Int
+  owner     Boolean
+  shared    Boolean
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime? @db.Timestamp(6)
+  lists     lists     @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users     users     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+enum itemStatus {
+  chek
+  uncheck
+}
+
+enum listStatus {
+  open
+  finished
+  deleted
+}
