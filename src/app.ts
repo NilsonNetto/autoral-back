@@ -5,7 +5,8 @@ dotenv.config();
 
 import {
   authenticationRouter,
-  listRouter
+  listRouter,
+  localRouter
 } from "@/Routers"
 
 const app = express();
@@ -17,6 +18,7 @@ app
   .get("/status", (req, res) => res.send("OK! Server is up"))
   .use("/auth", authenticationRouter)
   .use("/list", listRouter)
+  .use("/local", localRouter)
 
 const port = process.env.PORT || 4000;
 

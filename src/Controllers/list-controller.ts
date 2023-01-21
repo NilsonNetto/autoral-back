@@ -22,7 +22,7 @@ export async function listPost(req: AuthenticatedRequest, res: Response) {
   try {
     const createdList = await listService.createList(userId, listData)
     
-    return res.status(httpStatus.OK).send(createdList);
+    return res.status(httpStatus.CREATED).send(createdList);
   } catch (error) {
     return res.status(httpStatus.UNAUTHORIZED).send(error.message);
   }
