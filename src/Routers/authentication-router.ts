@@ -1,10 +1,12 @@
 import { Router } from 'express';
-import { signInPost, loginPost } from '@/Controllers';
+import { registerPost, loginPost } from '@/Controllers';
+import { validateBody } from '@/Middlewares';
+import { loginSchema, registerSchema } from '@/Schemas';
 
 const authenticationRouter = Router();
 
 authenticationRouter
-  .post("/sign-in", signInPost)
-  .post("/login", loginPost)
+  .post("/register", validateBody(registerSchema), registerPost)
+  .post("/login", validateBody(loginSchema), loginPost);
 
 export { authenticationRouter };

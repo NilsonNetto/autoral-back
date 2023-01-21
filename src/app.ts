@@ -4,7 +4,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import {
-  authenticationRouter
+  authenticationRouter,
+  listRouter
 } from "@/Routers"
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(cors());
 app
   .get("/status", (req, res) => res.send("OK! Server is up"))
   .use("/auth", authenticationRouter)
+  .use("/list", listRouter)
 
 const port = process.env.PORT || 4000;
 

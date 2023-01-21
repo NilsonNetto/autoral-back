@@ -1,14 +1,14 @@
 import { prisma } from "@/Configs";
 import { Prisma } from "@prisma/client";
 
-async function createUser(data: Prisma.usersUncheckedCreateInput) {
-  return prisma.users.create({
+async function createSession(data: Prisma.sessionsUncheckedCreateInput) {
+  return prisma.sessions.create({
     data
   })
 }
 
 const authenticationRepository = {
-  createUser,
+  createSession
 };
 
 export default authenticationRepository;

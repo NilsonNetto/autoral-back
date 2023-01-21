@@ -1,23 +1,26 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
-import authenticationService, { signInParams } from "@/Services/authentication-service";
+import authenticationService, { loginParams, registerParams } from "@/Services/authentication-service";
 
-export async function signInPost(req: Request, res: Response) {
-  const data: signInParams = req.body;
+export async function registerPost(req: Request, res: Response) {
+  const userData: registerParams = req.body;
 
   try {
-    await authenticationService.signIn(data);
+    await authenticationService.register(userData);
     
     return res.sendStatus(httpStatus.CREATED);
   } catch (error) {
-    return res.status(httpStatus.UNAUTHORIZED).send();
+    return res.status(httpStatus.UNAUTHORIZED).send(error.message);
   }
 }
 
 export async function loginPost(req: Request, res: Response) {
+  const userData: loginParams = req.body;
+
   try {
-    
+    const session = await authenticationService.login(userData);
+    return res.send(httpStatus.OK).send(session);
   } catch (error) {
-    return res.status(httpStatus.UNAUTHORIZED).send()
+    return res.status(httpStatus.UNAUTHORIZED).send(error.message);
   }
 }
