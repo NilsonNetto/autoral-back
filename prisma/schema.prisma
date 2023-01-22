@@ -8,12 +8,12 @@ datasource db {
 }
 
 model items {
-  id         Int          @id @default(autoincrement())
-  name       String       @db.VarChar(255)
-  complement String?      @db.VarChar(255)
-  createdAt  DateTime     @default(now()) @db.Timestamp(6)
-  updatedAt  DateTime?    @db.Timestamp(6)
-  listsItems listsItems[]
+  id               Int                @id @default(autoincrement())
+  name             String             @db.VarChar(255)
+  complement       String?            @db.VarChar(255)
+  createdAt        DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime?          @db.Timestamp(6)
+  listsLocalsItems listsLocalsItems[]
 }
 
 model lists {
@@ -23,34 +23,32 @@ model lists {
   status      listStatus    @default(open)
   createdAt   DateTime      @default(now()) @db.Timestamp(6)
   updatedAt   DateTime?     @db.Timestamp(6)
-  listsItems  listsItems[]
   listsLocals listsLocals[]
   usersLists  usersLists[]
 }
 
-model listsItems {
-  id        Int        @id @default(autoincrement())
-  listId    Int
-  localId   Int
-  itemId    Int
-  status    itemStatus @default(uncheck)
-  quantity  Int?
-  unit      Int?
-  createdAt DateTime   @default(now()) @db.Timestamp(6)
-  updatedAt DateTime?  @db.Timestamp(6)
-  items     items      @relation(fields: [itemId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  lists     lists      @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  locals    locals     @relation(fields: [localId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model listsLocalsItems {
+  id           Int         @id @default(autoincrement())
+  listLocalsId Int
+  itemId       Int
+  status       itemStatus  @default(uncheck)
+  quantity     Int?
+  unit         Int?
+  createdAt    DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime?   @db.Timestamp(6)
+  items        items       @relation(fields: [itemId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  listsLocals  listsLocals @relation(fields: [listLocalsId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model listsLocals {
-  id        Int       @id @default(autoincrement())
-  listId    Int
-  localId   Int
-  createdAt DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt DateTime? @db.Timestamp(6)
-  lists     lists     @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  locals    locals    @relation(fields: [localId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id              Int                @id @default(autoincrement())
+  listId          Int
+  localId         Int
+  createdAt       DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime?          @db.Timestamp(6)
+  lists           lists              @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  locals          locals             @relation(fields: [localId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  listLocalsItems listsLocalsItems[]
 }
 
 model locals {
@@ -59,7 +57,6 @@ model locals {
   complement  String?       @db.VarChar(255)
   createdAt   DateTime      @default(now()) @db.Timestamp(6)
   updatedAt   DateTime?     @db.Timestamp(6)
-  listsItems  listsItems[]
   listsLocals listsLocals[]
 }
 

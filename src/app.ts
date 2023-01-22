@@ -6,7 +6,11 @@ dotenv.config();
 import {
   authenticationRouter,
   listRouter,
-  localRouter
+  localRouter,
+  itemRouter,
+  shareRouter,
+  historyRouter,
+  profileRouter
 } from "@/Routers"
 
 const app = express();
@@ -19,6 +23,10 @@ app
   .use("/auth", authenticationRouter)
   .use("/list", listRouter)
   .use("/local", localRouter)
+  .use("/item", itemRouter)
+  .use("/share", shareRouter)
+  .use("/history", historyRouter)
+  .use("/profile", profileRouter)
 
 const port = process.env.PORT || 4000;
 
