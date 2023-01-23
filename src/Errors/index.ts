@@ -7,4 +7,4 @@ export * from "./invalid-listId-error";
 export * from "./invalid-list-owner-error";
 export * from "./invalid-userId-error";
 export * from "./cannot-finish-list-error";
-export * from "./invalid-list-status-error":
+export * from "./invalid-list-status-error";

@@ -1,8 +1,7 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-dotenv.config();
 
+import { loadEnv } from "./Configs";
 import {
   authenticationRouter,
   listRouter,
@@ -13,12 +12,13 @@ import {
   profileRouter
 } from "@/Routers"
 
+loadEnv();
+
 const app = express();
 
-app.use(express.json());
-app.use(cors());
-
 app
+  .use(cors())
+  .use(express.json())
   .get("/status", (req, res) => res.send("OK! Server is up"))
   .use("/auth", authenticationRouter)
   .use("/list", listRouter)
@@ -28,7 +28,7 @@ app
   .use("/history", historyRouter)
   .use("/profile", profileRouter)
 
-const port = process.env.PORT || 4000;
+const port = +process.env.PORT || 4000;
 
 app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
