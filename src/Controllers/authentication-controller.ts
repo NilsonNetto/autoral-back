@@ -16,10 +16,10 @@ export async function registerPost(req: Request, res: Response) {
 
 export async function loginPost(req: Request, res: Response) {
   const userData: loginParams = req.body;
-
+  console.log(userData);
   try {
     const session = await authenticationService.login(userData);
-    return res.send(httpStatus.OK).send(session);
+    return res.status(httpStatus.OK).send(session);
   } catch (error) {
     return res.status(httpStatus.UNAUTHORIZED).send(error.message);
   }

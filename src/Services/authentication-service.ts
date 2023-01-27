@@ -1,13 +1,13 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-import { duplicatedEmailError, duplicatedUsernameError, credentialError } from "@/Errors";
+import { duplicatedEmailError, credentialError } from "@/Errors";
 import authenticationRepository from "@/Repositories/authentication-repository"
 import userRepository from "@/Repositories/user-repository";
 
 async function register(data: registerParams) {
-
-  await verifyRegister(data.email, data.username);
+  
+  await verifyRegister(data.email);
 
   const passwordHash = await bcrypt.hash(data.password, 13);
 
@@ -15,6 +15,7 @@ async function register(data: registerParams) {
     ...data,
     password: passwordHash
   }
+
   return userRepository.createUser(createUserData);
 }
 
@@ -36,17 +37,11 @@ async function login(data: loginParams) {
   return response;
 }
 
-async function verifyRegister(email: string, username: string) {
+async function verifyRegister(email: string) {
   const emailRegistered = await userRepository.findUserByEmail(email);
 
   if(emailRegistered){
     throw duplicatedEmailError();
-  }
-
-  const usernameRegistered = await userRepository.findUserByUsername(username);
-
-  if(usernameRegistered){
-    throw duplicatedUsernameError();
   }
 }
 
@@ -89,9 +84,7 @@ export type loginParams = {
 export type registerParams = {
   email: string,
   password: string,
-  name: string,
-  username: string,
-  profilePicture?: string
+  name: string
 }
 
 export type sessionParams = {

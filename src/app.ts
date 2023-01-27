@@ -1,7 +1,10 @@
-import express from "express";
+import express, {Express} from "express";
 import cors from "cors";
 
-import { loadEnv } from "./Configs";
+import { connectDb, loadEnv } from "@/Configs";
+
+loadEnv();
+
 import {
   authenticationRouter,
   listRouter,
@@ -11,8 +14,6 @@ import {
   historyRouter,
   profileRouter
 } from "@/Routers"
-
-loadEnv();
 
 const app = express();
 
@@ -28,8 +29,9 @@ app
   .use("/history", historyRouter)
   .use("/profile", profileRouter)
 
-const port = +process.env.PORT || 4000;
+export function init(): Promise<Express> {
+  connectDb();
+  return Promise.resolve(app);
+}
 
-app.listen(port, () => {
-  console.log(`Server is listening on port ${port}`);
-});
+export default app;

@@ -23,19 +23,10 @@ async function findUserByEmail(email: string) {
   })
 }
 
-async function findUserByUsername(username: string) {
-  return prisma.users.findFirst({
-    where: {
-      username
-    }
-  })
-}
-
 const userRepository = {
   createUser,
   findUserByUserId,
   findUserByEmail,
-  findUserByUsername,
 };
 
 export default userRepository;

@@ -75,7 +75,6 @@ model users {
   email          String       @unique @db.VarChar(255)
   password       String
   name           String       @db.VarChar(255)
-  username       String       @unique @db.VarChar(255)
   profilePicture String?
   createdAt      DateTime     @default(now()) @db.Timestamp(6)
   updatedAt      DateTime?    @db.Timestamp(6)

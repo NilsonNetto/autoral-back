@@ -1,7 +1,6 @@
 export * from "./unauthorized-error";
 export * from "./invalid-schema-error";
 export * from "./duplicated-email-error";
-export * from "./duplicated-username-error";
 export * from "./credential-error";
 export * from "./invalid-listId-error";
 export * from "./invalid-list-owner-error";
