@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import { listLocalsGet, listLocalsPost } from '@/Controllers';
-import { authenticateToken, validateBody, validateParams } from '@/Middlewares';
-import { listIdSchema, localSchema } from '@/Schemas';
+import { userProfileGet, userProfilePut } from '@/Controllers';
+import { authenticateToken, validateBody } from '@/Middlewares';
+import { registerSchema } from '@/Schemas';
 
 const profileRouter = Router();
 
 profileRouter
   .all("/*", authenticateToken)
-  .get("/:userId", validateParams(listIdSchema), listLocalsGet)
-  .put("/:userId",validateParams(listIdSchema), validateBody(localSchema), listLocalsPost)
+  .get("/", userProfileGet)
+  .put("/", validateBody(registerSchema), userProfilePut)
   
 export { profileRouter };

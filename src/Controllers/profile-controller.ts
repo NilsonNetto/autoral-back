@@ -1,15 +1,29 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "@/Middlewares";
 import httpStatus from "http-status";
-import localService, { localParams } from "@/Services/local-service";
+import profileService from "@/Services/profile-service";
+import { registerParams } from "@/Services/authentication-service";
 
 export async function userProfileGet(req: AuthenticatedRequest, res: Response) {
-  const listId = Number(req.params.listId);
+  const userId = req.userId;
 
   try {
-    const userLists = await localService.findListLocals(listId);
+    const userProfile = await profileService.findProfile(userId);
     
-    return res.status(httpStatus.OK).send(userLists);
+    return res.status(httpStatus.OK).send(userProfile);
+  } catch (error) {
+    return res.status(httpStatus.UNAUTHORIZED).send(error.message);
+  }
+}
+
+export async function userProfilePut(req: AuthenticatedRequest, res: Response) {
+  const userId = req.userId;
+  const profileData: registerParams = req.body;
+
+  try {
+    const userProfileUpdated = await profileService.updateProfile(userId, profileData);
+    
+    return res.status(httpStatus.OK).send(userProfileUpdated);
   } catch (error) {
     return res.status(httpStatus.UNAUTHORIZED).send(error.message);
   }

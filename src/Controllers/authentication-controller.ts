@@ -16,7 +16,7 @@ export async function registerPost(req: Request, res: Response) {
 
 export async function loginPost(req: Request, res: Response) {
   const userData: loginParams = req.body;
-  console.log(userData);
+  
   try {
     const session = await authenticationService.login(userData);
     return res.status(httpStatus.OK).send(session);

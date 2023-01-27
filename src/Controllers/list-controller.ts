@@ -8,7 +8,7 @@ export async function listsGet(req: AuthenticatedRequest, res: Response) {
 
   try {
     const userLists = await listService.findList(userId);
-    
+    console.log(userLists);
     return res.status(httpStatus.OK).send(userLists);
   } catch (error) {
     return res.status(httpStatus.UNAUTHORIZED).send(error.message);

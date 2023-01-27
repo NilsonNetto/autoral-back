@@ -23,10 +23,20 @@ async function findUserByEmail(email: string) {
   })
 }
 
+async function updateUserByUserId(userId: number, data: Prisma.usersUncheckedCreateInput) {
+  return prisma.users.update({
+    where: {
+      id: userId
+    },
+    data
+  })
+}
+
 const userRepository = {
   createUser,
   findUserByUserId,
   findUserByEmail,
+  updateUserByUserId
 };
 
 export default userRepository;
