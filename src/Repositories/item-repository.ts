@@ -1,9 +1,8 @@
 import { prisma } from "@/Configs";
-import { listLocalsItemsParams } from "@/Services/item-service";
-import { itemStatus, items, listsLocalsItems } from "@prisma/client";
+import { items, listsLocalsItems } from "@prisma/client";
 
 async function findListItemsByListLocalId(listLocalId: number) {
-  return prisma.listsLocals.findMany({
+  return prisma.listsLocals.findFirst({
     where: {
       id: listLocalId
     },
@@ -23,38 +22,38 @@ async function findListItemsByListLocalId(listLocalId: number) {
   })
 }
 
-async function findItemByNameAndComplement(itemParams: itemParams) {
+async function findItemByName(name: string) {
   return prisma.items.findFirst({
     where:{
-      name: itemParams.name,
+      name
     }
   })
 }
 
-async function createItem(itemParams: itemParams) {
+async function createItem(name: string) {
   return prisma.items.create({
     data: {
-      name: itemParams.name,
+      name,
     }
   })
 }
 
-async function createListLocalsItems(listLocalsItemsParams: listLocalsItemsParams) {
+async function createListLocalsItems(data: listLocalsItemsParams) {
   return prisma.listsLocalsItems.create({
-    data: {
-      ...listLocalsItemsParams,
-      status: itemStatus.uncheck
-    }
+    data
   })
 }
 
 export type itemParams = Pick<items, "name">
 
-export type insertItemParams = itemParams & Pick<listsLocalsItems, "status"|"quantity" | "unit">
+export type insertItemParams = itemParams & Pick<listsLocalsItems, "checked" | "quantity" | "unit">
+
+export type listLocalsItemsParams = Pick<listsLocalsItems, "listLocalsId" | "itemId" | "checked" | "quantity" | "unit">
+
 
 const itemRepository = {
   findListItemsByListLocalId,
-  findItemByNameAndComplement,
+  findItemByName,
   createItem,
   createListLocalsItems
 };

@@ -1,14 +1,27 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "@/Middlewares";
 import httpStatus from "http-status";
-import listService, { listParams } from "@/Services/list-service";
+import listService from "@/Services/list-service";
 
 export async function listsGet(req: AuthenticatedRequest, res: Response) {
   const userId = req.userId;
 
   try {
     const userLists = await listService.findList(userId);
-    console.log(userLists);
+
+    return res.status(httpStatus.OK).send(userLists);
+  } catch (error) {
+    return res.status(httpStatus.UNAUTHORIZED).send(error.message);
+  }
+}
+
+export async function listNameGet(req: AuthenticatedRequest, res: Response) {
+  const userId = req.userId;
+  const listId = Number(req.params.listId)
+
+  try {
+    const userLists = await listService.findListById(listId);
+
     return res.status(httpStatus.OK).send(userLists);
   } catch (error) {
     return res.status(httpStatus.UNAUTHORIZED).send(error.message);

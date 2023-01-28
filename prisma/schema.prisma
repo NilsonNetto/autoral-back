@@ -29,9 +29,9 @@ model listsLocalsItems {
   id           Int         @id @default(autoincrement())
   listLocalsId Int
   itemId       Int
-  status       itemStatus  @default(uncheck)
+  checked      Boolean     @default(false)
   quantity     Int?
-  unit         Int?
+  unit         itemUnit    @default(un)
   createdAt    DateTime    @default(now()) @db.Timestamp(6)
   updatedAt    DateTime?   @db.Timestamp(6)
   items        items       @relation(fields: [itemId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -91,13 +91,13 @@ model usersLists {
   users     users     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-enum itemStatus {
-  chek
-  uncheck
-}
-
 enum listStatus {
   open
   finished
   deleted
+}
+
+enum itemUnit {
+  kgs
+  un
 }

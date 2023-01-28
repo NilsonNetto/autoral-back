@@ -15,6 +15,14 @@ async function findListsByUserId(userId: number) {
   })
 }
 
+async function findListsByListId(listId: number) {
+  return prisma.lists.findFirst({
+    where: {
+      id: listId
+    }
+  })
+}
+
 async function findListByListId(listId: number) {
   return prisma.lists.findFirst({
     where: {
@@ -77,6 +85,7 @@ export type listParams = Pick<lists, "name">
 
 const listRepository = {
   findListsByUserId,
+  findListsByListId,
   findListByListId,
   findUserListByUserIdAndListId,
   createList,

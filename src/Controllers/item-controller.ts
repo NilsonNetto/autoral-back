@@ -16,12 +16,12 @@ export async function listItemsGet(req: AuthenticatedRequest, res: Response) {
   }
 }
 
-export async function itemPost(req: AuthenticatedRequest, res: Response) {
-  const listId = Number(req.params.listId);
+export async function listItemPost(req: AuthenticatedRequest, res: Response) {
+  const listLocalId = Number(req.params.listLocalId);
   const itemData: insertItemParams = req.body;
 
   try {
-    const createdItem = await itemService.createItem(listId, itemData);
+    const createdItem = await itemService.createItem(listLocalId, itemData);
     
     return res.status(httpStatus.OK).send(createdItem);
   } catch (error) {

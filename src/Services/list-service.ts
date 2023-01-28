@@ -7,6 +7,10 @@ async function findList(userId: number) {
   return listRepository.findListsByUserId(userId);
 }
 
+async function findListById(listId: number) {
+  return listRepository.findListsByListId(listId);
+}
+
 async function createList(userId: number, listData: listParams) {
   //fazer uma transaction aqui, só insere a lista se fizer um userList
   const createdList = await listRepository.createList(listData)
@@ -92,6 +96,7 @@ export type shareListParams = {
 
 const listService = {
   findList,
+  findListById,
   createList,
   shareList,
   finishList,
