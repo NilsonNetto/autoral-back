@@ -11,3 +11,7 @@ export const loginSchema = Joi.object<loginParams>({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required()
 });
+
+export const pictureSchema = Joi.object<{profilePicture: string}>({
+  profilePicture: Joi.string().uri().required()
+});

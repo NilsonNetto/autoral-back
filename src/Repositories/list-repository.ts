@@ -1,5 +1,5 @@
 import { prisma } from "@/Configs";
-import { Prisma, listStatus } from "@prisma/client";
+import { Prisma, lists, listStatus } from "@prisma/client";
 
 async function findListsByUserId(userId: number) {
   return prisma.usersLists.findMany({
@@ -8,7 +8,10 @@ async function findListsByUserId(userId: number) {
     },
     include: {
       lists: true
-    }
+    },
+    orderBy: {
+      createdAt: "desc"
+    } 
   })
 }
 
@@ -68,6 +71,9 @@ async function createSharedUserList(userId: number, listId: number) {
     }
   })
 }
+
+export type listParams = Pick<lists, "name">
+
 
 const listRepository = {
   findListsByUserId,

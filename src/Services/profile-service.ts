@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-import userRepository from "@/Repositories/user-repository";
+import userRepository, { pictureParams } from "@/Repositories/user-repository";
 import { registerParams } from "./authentication-service";
 import { credentialError, duplicatedEmailError } from "@/Errors";
 
@@ -30,6 +30,14 @@ async function updateProfile(userId: number, profileData: registerParams) {
   return updatedProfile;
 }
 
+async function updatePicture(userId: number, profilePicture: pictureParams) {
+  await verifyUser(userId);
+
+  const updatedPicture = await userRepository.updateUserPictureByUserId(userId, profilePicture);
+
+  return updatedPicture;
+}
+
 async function verifyUser(userId: number) {
   const user = await userRepository.findUserByUserId(userId);
 
@@ -50,7 +58,8 @@ async function verifyEmail(email: string) {
 
 const profileService = {
   findProfile,
-  updateProfile
+  updateProfile,
+  updatePicture
 };
 
 export default profileService;

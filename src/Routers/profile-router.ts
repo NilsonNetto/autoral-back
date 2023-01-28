@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { userProfileGet, userProfilePut } from '@/Controllers';
+import { userProfileGet, userProfilePut, userPicutrePut } from '@/Controllers';
 import { authenticateToken, validateBody } from '@/Middlewares';
-import { registerSchema } from '@/Schemas';
+import { registerSchema, pictureSchema } from '@/Schemas';
 
 const profileRouter = Router();
 
@@ -9,5 +9,6 @@ profileRouter
   .all("/*", authenticateToken)
   .get("/", userProfileGet)
   .put("/", validateBody(registerSchema), userProfilePut)
+  .put("/picture", validateBody(pictureSchema), userPicutrePut)
   
 export { profileRouter };

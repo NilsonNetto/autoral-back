@@ -1,9 +1,8 @@
-import { insertItemParams } from "@/Services/item-service";
+import { insertItemParams } from "@/Repositories/item-repository";
 import Joi from "joi";
 
 export const itemSchema = Joi.object<insertItemParams>({
   name: Joi.string().required(),
-  complement: Joi.string(),
   quantity: Joi.number().min(0),
   unit: Joi.string()
 });

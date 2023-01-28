@@ -10,7 +10,6 @@ datasource db {
 model items {
   id               Int                @id @default(autoincrement())
   name             String             @db.VarChar(255)
-  complement       String?            @db.VarChar(255)
   createdAt        DateTime           @default(now()) @db.Timestamp(6)
   updatedAt        DateTime?          @db.Timestamp(6)
   listsLocalsItems listsLocalsItems[]
@@ -19,7 +18,6 @@ model items {
 model lists {
   id          Int           @id @default(autoincrement())
   name        String        @db.VarChar(255)
-  complement  String?       @db.VarChar(255)
   status      listStatus    @default(open)
   createdAt   DateTime      @default(now()) @db.Timestamp(6)
   updatedAt   DateTime?     @db.Timestamp(6)
@@ -54,7 +52,6 @@ model listsLocals {
 model locals {
   id          Int           @id @default(autoincrement())
   name        String        @db.VarChar(255)
-  complement  String?       @db.VarChar(255)
   createdAt   DateTime      @default(now()) @db.Timestamp(6)
   updatedAt   DateTime?     @db.Timestamp(6)
   listsLocals listsLocals[]

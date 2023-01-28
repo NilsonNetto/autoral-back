@@ -1,10 +1,10 @@
 import { invalidListOwnerError, invalidUserIdError, cannotFinishListError, invalidListIdError, invalidListStatusError } from "@/Errors";
-import itemRepository from "@/Repositories/item-repository";
+import itemRepository, {itemParams, insertItemParams} from "@/Repositories/item-repository";
 import listRepository from "@/Repositories/list-repository";
 import { items, listsLocals, listsLocalsItems } from "@prisma/client";
 
-async function findListItems(listId: number) {
-  const listItems = await itemRepository.findListItemsByListId(listId);
+async function findListLocalItems(listLocalId: number) {
+  const listItems = await itemRepository.findListItemsByListLocalId(listLocalId);
 
   return listItems;
 }
@@ -12,7 +12,6 @@ async function findListItems(listId: number) {
 async function createItem(listLocalsId: number, itemData: insertItemParams) {
   const itemParams: itemParams = {
     name: itemData.name,
-    complement: itemData.complement
   }
   const item = await verifyItem(itemParams);
 
@@ -48,14 +47,10 @@ async function createListLocalsItems(data: listLocalsItemsParams) {
   return itemRepository.createListLocalsItems(data);
 }
 
-export type itemParams = Pick<items, "name" | "complement">
-
-export type insertItemParams = itemParams & Pick<listsLocalsItems, "quantity" | "unit">
-
 export type listLocalsItemsParams = Pick<listsLocalsItems, "listLocalsId" | "itemId" | "quantity" | "unit">
 
 const itemService = {
-  findListItems,
+  findListLocalItems,
   createItem
 };
 

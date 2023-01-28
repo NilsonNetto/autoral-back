@@ -1,8 +1,7 @@
 import { invalidListOwnerError, invalidUserIdError, cannotFinishListError, invalidListIdError, invalidListStatusError } from "@/Errors";
 import listRepository from "@/Repositories/list-repository";
-import localRepository from "@/Repositories/local-repository"
-import userRepository from "@/Repositories/user-repository";
-import { locals, listStatus } from "@prisma/client";
+import localRepository, {localParams} from "@/Repositories/local-repository"
+import { listStatus } from "@prisma/client";
 
 async function findListLocals(listId: number) {
   const listLocals = await localRepository.findLocalByListId(listId);
@@ -46,8 +45,6 @@ async function verifyLocal(localData: localParams) {
 async function createListLocal(listId: number, localId: number) {
   return localRepository.createListLocal(listId, localId)
 }
-
-export type localParams = Pick<locals, "name" | "complement">
 
 const localService = {
   findListLocals,

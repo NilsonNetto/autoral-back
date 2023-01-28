@@ -1,14 +1,13 @@
 import { prisma } from "@/Configs";
-import { itemParams, listLocalsItemsParams } from "@/Services/item-service";
-import { itemStatus } from "@prisma/client";
+import { listLocalsItemsParams } from "@/Services/item-service";
+import { itemStatus, items, listsLocalsItems } from "@prisma/client";
 
-async function findListItemsByListId(listId: number) {
+async function findListItemsByListLocalId(listLocalId: number) {
   return prisma.listsLocals.findMany({
     where: {
-      listId
+      id: listLocalId
     },
     include: {
-      locals: true,
       listLocalsItems: {
         include: {
           items: true
@@ -28,7 +27,6 @@ async function findItemByNameAndComplement(itemParams: itemParams) {
   return prisma.items.findFirst({
     where:{
       name: itemParams.name,
-      complement: itemParams.complement
     }
   })
 }
@@ -37,7 +35,6 @@ async function createItem(itemParams: itemParams) {
   return prisma.items.create({
     data: {
       name: itemParams.name,
-      complement: itemParams.complement
     }
   })
 }
@@ -51,9 +48,12 @@ async function createListLocalsItems(listLocalsItemsParams: listLocalsItemsParam
   })
 }
 
+export type itemParams = Pick<items, "name">
+
+export type insertItemParams = itemParams & Pick<listsLocalsItems, "status"|"quantity" | "unit">
 
 const itemRepository = {
-  findListItemsByListId,
+  findListItemsByListLocalId,
   findItemByNameAndComplement,
   createItem,
   createListLocalsItems

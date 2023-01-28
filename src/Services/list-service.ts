@@ -1,19 +1,18 @@
 import { invalidListOwnerError, invalidUserIdError, cannotFinishListError } from "@/Errors";
 import { invalidListIdError } from "@/Errors";
-import listRepository from "@/Repositories/list-repository"
+import listRepository, {listParams} from "@/Repositories/list-repository"
 import userRepository from "@/Repositories/user-repository";
-import { lists } from "@prisma/client";
 
 async function findList(userId: number) {
   return listRepository.findListsByUserId(userId);
 }
 
-async function createList(userId: number, listData: listParams ) {
+async function createList(userId: number, listData: listParams) {
   //fazer uma transaction aqui, só insere a lista se fizer um userList
   const createdList = await listRepository.createList(listData)
-
+  
   const createdUserlist = await listRepository.createUserList(userId, createdList.id)
-
+  
   return createdUserlist;
 }
 
@@ -90,8 +89,6 @@ export type shareListParams = {
   sharedUserId: number,
   listId: number,
 }
-
-export type listParams = Pick<lists, "name" | "complement">
 
 const listService = {
   findList,

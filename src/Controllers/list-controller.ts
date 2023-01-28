@@ -17,7 +17,7 @@ export async function listsGet(req: AuthenticatedRequest, res: Response) {
 
 export async function listPost(req: AuthenticatedRequest, res: Response) {
   const userId = req.userId;
-  const listData: listParams = req.body;
+  const listData: {name: string} = req.body;
 
   try {
     const createdList = await listService.createList(userId, listData)

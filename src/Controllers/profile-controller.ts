@@ -28,3 +28,16 @@ export async function userProfilePut(req: AuthenticatedRequest, res: Response) {
     return res.status(httpStatus.UNAUTHORIZED).send(error.message);
   }
 }
+
+export async function userPicutrePut(req: AuthenticatedRequest, res: Response) {
+  const userId = req.userId;
+  const profilePicture: registerParams = req.body;
+
+  try {
+    const userProfileUpdated = await profileService.updateProfile(userId, profilePicture);
+    
+    return res.status(httpStatus.OK).send(userProfileUpdated);
+  } catch (error) {
+    return res.status(httpStatus.UNAUTHORIZED).send(error.message);
+  }
+}

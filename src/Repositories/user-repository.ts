@@ -1,5 +1,5 @@
 import { prisma } from "@/Configs";
-import { Prisma } from "@prisma/client";
+import { Prisma, users } from "@prisma/client";
 
 async function createUser(data: Prisma.usersUncheckedCreateInput) {
   return prisma.users.create({
@@ -7,10 +7,10 @@ async function createUser(data: Prisma.usersUncheckedCreateInput) {
   })
 }
 
-async function findUserByUserId(userId: number) {
+async function findUserByUserId(id: number) {
   return prisma.users.findFirst({
     where: {
-      id: userId
+      id
     }
   })
 }
@@ -23,20 +23,32 @@ async function findUserByEmail(email: string) {
   })
 }
 
-async function updateUserByUserId(userId: number, data: Prisma.usersUncheckedCreateInput) {
+async function updateUserByUserId(id: number, data: Prisma.usersUncheckedCreateInput) {
   return prisma.users.update({
     where: {
-      id: userId
+      id
     },
     data
   })
 }
 
+async function updateUserPictureByUserId(id: number, data: pictureParams) {
+  return prisma.users.update({
+    where: {
+      id
+    },
+    data
+  })
+}
+
+export type pictureParams = Pick<users, "profilePicture">;
+
 const userRepository = {
   createUser,
   findUserByUserId,
   findUserByEmail,
-  updateUserByUserId
+  updateUserByUserId,
+  updateUserPictureByUserId
 };
 
 export default userRepository;

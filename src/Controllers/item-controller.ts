@@ -1,15 +1,16 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "@/Middlewares";
 import httpStatus from "http-status";
-import itemService, { insertItemParams } from "@/Services/item-service";
+import itemService from "@/Services/item-service";
+import { insertItemParams } from "@/Repositories/item-repository";
 
 export async function listItemsGet(req: AuthenticatedRequest, res: Response) {
-  const listId = Number(req.params.listId);
+  const listLocalId = Number(req.params.listLocalId);
 
   try {
-    const listItems = await itemService.findListItems(listId);
+    const itemsList = await itemService.findListLocalItems(listLocalId);
     
-    return res.status(httpStatus.OK).send(listItems);
+    return res.status(httpStatus.OK).send(itemsList);
   } catch (error) {
     return res.status(httpStatus.UNAUTHORIZED).send(error.message);
   }
