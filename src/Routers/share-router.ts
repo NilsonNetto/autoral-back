@@ -1,15 +1,17 @@
 import { Router } from 'express';
-import { listLocalsGet, listLocalsPost } from '@/Controllers';
+import { sharedListsGet, sharedOwnedListsGet, shareRequestPost, acceptRequestPost, refuseRequestPost, removeSharePost } from '@/Controllers';
 import { authenticateToken, validateBody, validateParams } from '@/Middlewares';
-import { listIdSchema, localSchema } from '@/Schemas';
+import { listIdSchema, userEmailSchema, requestIdSchema } from '@/Schemas';
 
 const shareRouter = Router();
 
 shareRouter
   .all("/*", authenticateToken)
-  .get("/", listLocalsGet)
-  .post("/accept/:requestId",validateParams(listIdSchema), validateBody(localSchema), listLocalsPost)
-  .post("/refuse/:requestId")
-  .post("/")//transferir a rota de fazer o share para cá
+  .get("/", sharedListsGet)
+  .get("/owner", sharedOwnedListsGet)
+  .post("/:listId", validateParams(listIdSchema), validateBody(userEmailSchema), shareRequestPost)
+  .post("/accept/:requestId", validateParams(requestIdSchema), acceptRequestPost) 
+  .post("/refuse/:requestId", validateParams(requestIdSchema), refuseRequestPost)
+  .post("/remove/:listId", validateParams(listIdSchema), removeSharePost) //rota para remover o compartilhamento com alguém(implementar)
 
 export { shareRouter };

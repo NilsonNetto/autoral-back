@@ -16,13 +16,14 @@ model ItemsName {
 }
 
 model Lists {
-  id          Int           @id @default(autoincrement())
-  name        String        @db.VarChar(255)
-  finished    Boolean       @default(false)
-  createdAt   DateTime      @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime?     @db.Timestamp(6)
-  ListsLocals ListsLocals[]
-  UsersLists  UsersLists[]
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(255)
+  finished      Boolean         @default(false)
+  createdAt     DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime?       @db.Timestamp(6)
+  ListsLocals   ListsLocals[]
+  UsersLists    UsersLists[]
+  ShareRequests ShareRequests[]
 }
 
 model Items {
@@ -69,15 +70,17 @@ model Sessions {
 }
 
 model Users {
-  id             Int          @id @default(autoincrement())
-  email          String       @unique @db.VarChar(255)
+  id             Int             @id @default(autoincrement())
+  email          String          @unique @db.VarChar(255)
   password       String
-  name           String       @db.VarChar(255)
+  name           String          @db.VarChar(255)
   profilePicture String?
-  createdAt      DateTime     @default(now()) @db.Timestamp(6)
-  updatedAt      DateTime?    @db.Timestamp(6)
+  createdAt      DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime?       @db.Timestamp(6)
   Sessions       Sessions[]
   UsersLists     UsersLists[]
+  OwnerId        ShareRequests[] @relation("OwnerId")
+  UserId         ShareRequests[] @relation("UserId")
 }
 
 model UsersLists {
@@ -90,6 +93,20 @@ model UsersLists {
   updatedAt DateTime? @db.Timestamp(6)
   Lists     Lists     @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   Users     Users     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model ShareRequests {
+  id        Int       @id @default(autoincrement())
+  listId    Int
+  ownerId   Int
+  userId    Int
+  pending   Boolean   @default(true)
+  accepted  Boolean?
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime? @db.Timestamp(6)
+  Lists     Lists     @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  OwnerId   Users     @relation("OwnerId", fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  UserId    Users     @relation("UserId", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum ItemUnit {

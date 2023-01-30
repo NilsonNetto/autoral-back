@@ -7,8 +7,8 @@ const historyRouter = Router();
 
 historyRouter
   .all("/*", authenticateToken)
-  .get("/lists", allListsHistoryGet)
-  .get("/list/:listId", validateParams(listIdSchema), listHistoryGet)
+  .get("/", allListsHistoryGet) //rota para pegar as ultimas 5 listas com finished true
+  .get("/list/:listId", validateParams(listIdSchema), listHistoryGet) 
   .get("/item/:itemId",validateParams(itemIdSchema), itemHistoryGet)
   
 export { historyRouter };
