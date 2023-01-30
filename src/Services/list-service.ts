@@ -1,14 +1,13 @@
-import { invalidListOwnerError, invalidUserIdError, cannotFinishListError } from "@/Errors";
+import { invalidListOwnerError, cannotFinishListError } from "@/Errors";
 import { invalidListIdError } from "@/Errors";
 import listRepository, {listParams} from "@/Repositories/list-repository"
-import userRepository from "@/Repositories/user-repository";
 
 async function findList(userId: number) {
   return listRepository.findListsByUserId(userId);
 }
 
 async function findListById(listId: number) {
-  return listRepository.findListsByListId(listId);
+  return listRepository.findListByListId(listId);
 }
 
 async function createList(userId: number, listData: listParams) {
@@ -18,16 +17,6 @@ async function createList(userId: number, listData: listParams) {
   const createdUserlist = await listRepository.createUserList(userId, createdList.id)
   
   return createdUserlist;
-}
-
-async function shareList(sharedData: shareListParams ) {
-  const list = await verifyList(sharedData.listId);
-
-  await verifyOwner(sharedData.ownerUserId, list.id);
-
-  const user = await verifyUser(sharedData.sharedUserId);
-
-  return listRepository.createSharedUserList(user.id, list.id);
 }
 
 async function finishList(userId: number, listId: number ) {
@@ -48,8 +37,8 @@ async function deleteList(userId: number, listId: number ) {
   const list = await verifyList(listId);
  
   await verifyOwner(userId, list.id);
-
-  //const deleteList = await listRepository.updateFinishedList(list.id);
+  //vai ter que deletar um monte de outras coisas junto
+  //const deleteList = await listRepository.deleteFinishedList(list.id);
 
   return
 }
@@ -78,16 +67,6 @@ async function verifyOwner(ownerUserId: number, listId: number) {
   return userList;
 }
 
-async function verifyUser(userId: number) {
-  const user = await userRepository.findUserByUserId(userId);
-
-  if(!user){
-    throw invalidUserIdError();
-  }
-
-  return user;
-}
-
 export type shareListParams = {
   ownerUserId: number,
   sharedUserId: number,
@@ -98,7 +77,6 @@ const listService = {
   findList,
   findListById,
   createList,
-  shareList,
   finishList,
   deleteList
 };

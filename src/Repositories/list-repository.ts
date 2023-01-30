@@ -1,10 +1,11 @@
 import { prisma } from "@/Configs";
-import { Prisma, Lists } from "@prisma/client";
+import { Lists } from "@prisma/client";
 
 async function findListsByUserId(userId: number) {
   return prisma.usersLists.findMany({
     where: {
-      userId
+      userId,
+      shared: true
     },
     include: {
       Lists: true
@@ -15,18 +16,10 @@ async function findListsByUserId(userId: number) {
   })
 }
 
-async function findListsByListId(listId: number) {
+async function findListByListId(id: number) {
   return prisma.lists.findFirst({
     where: {
-      id: listId
-    }
-  })
-}
-
-async function findListByListId(listId: number) {
-  return prisma.lists.findFirst({
-    where: {
-      id: listId
+      id
     }
   })
 }
@@ -40,9 +33,20 @@ async function findUserListByUserIdAndListId(userId: number, listId: number) {
   })
 }
 
-async function createList(data: Prisma.ListsUncheckedCreateInput) {
+async function createList(data: listParams) {
   return prisma.lists.create({
     data
+  })
+}
+
+async function createUserList(userId: number, listId: number) {
+  return prisma.usersLists.create({
+    data:{
+      userId,
+      listId,
+      owner: true,
+      shared: true
+    }
   })
 }
 
@@ -58,40 +62,16 @@ async function updateFinishedList(listId: number) {
   })
 }
 
-async function createUserList(userId: number, listId: number) {
-  return prisma.usersLists.create({
-    data:{
-      userId,
-      listId,
-      owner: true,
-      shared: true
-    }
-  })
-}
-
-async function createSharedUserList(userId: number, listId: number) {
-  return prisma.usersLists.create({
-    data:{
-      userId,
-      listId,
-      owner: false,
-      shared: null
-    }
-  })
-}
-
 export type listParams = Pick<Lists, "name">
-
 
 const listRepository = {
   findListsByUserId,
-  findListsByListId,
   findListByListId,
   findUserListByUserIdAndListId,
   createList,
-  updateFinishedList,
   createUserList,
-  createSharedUserList
+  updateFinishedList,
+
 };
 
 export default listRepository;

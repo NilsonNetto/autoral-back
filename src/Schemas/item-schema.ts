@@ -3,7 +3,6 @@ import Joi from "joi";
 
 export const itemSchema = Joi.object<insertItemParams>({
   name: Joi.string().required(),
-  checked: Joi.boolean().required(),
   quantity: Joi.number().min(0),
   unit: Joi.string()
 });

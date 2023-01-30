@@ -28,13 +28,13 @@ model Lists {
 model Items {
   id           Int         @id @default(autoincrement())
   listLocalsId Int
-  itemId       Int
+  itemNameId   Int
   checked      Boolean     @default(false)
   quantity     Int?
   unit         ItemUnit    @default(un)
   createdAt    DateTime    @default(now()) @db.Timestamp(6)
   updatedAt    DateTime?   @db.Timestamp(6)
-  ItemName     ItemsName   @relation(fields: [itemId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ItemName     ItemsName   @relation(fields: [itemNameId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   ListsLocals  ListsLocals @relation(fields: [listLocalsId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
