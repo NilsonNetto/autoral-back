@@ -1,5 +1,5 @@
 import { prisma } from "@/Configs";
-import { locals } from "@prisma/client";
+import { LocalsName } from "@prisma/client";
 
 async function findLocalByListId(listId: number) {
   return prisma.listsLocals.findMany({
@@ -7,13 +7,13 @@ async function findLocalByListId(listId: number) {
       listId
     },
     include: {
-      locals: true
+      LocalsName : true
     }
   })
 }
 
 async function findLocalByNameAndComplement(data: localParams) {
-  return prisma.locals.findFirst({
+  return prisma.localsName.findFirst({
     where:{
       name: data.name,
     }
@@ -21,7 +21,7 @@ async function findLocalByNameAndComplement(data: localParams) {
 }
 
 async function createLocal(data: localParams) {
-  return prisma.locals.create({
+  return prisma.localsName.create({
     data
   })
 }
@@ -35,7 +35,7 @@ async function createListLocal(listId: number, localId: number) {
   })
 }
 
-export type localParams = Pick<locals, "name">
+export type localParams = Pick<LocalsName, "name">
 
 const localRepository = {
   findLocalByListId,

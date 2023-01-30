@@ -1,9 +1,8 @@
-import { listParams } from "@/Services/list-service";
+import { listParams } from "@/Repositories/list-repository";
 import Joi from "joi";
 
 export const listSchema = Joi.object<listParams>({
   name: Joi.string().required(),
-  complement: Joi.string()
 });
 
 export const shareListUserSchema = Joi.object<{userId: number}>({

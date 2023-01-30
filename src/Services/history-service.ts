@@ -1,6 +1,5 @@
 import { invalidListOwnerError, invalidUserIdError, cannotFinishListError, invalidListIdError, invalidListStatusError } from "@/Errors";
 import historyRepository from "@/Repositories/history-repository";
-import { items, listsLocals, listsLocalsItems } from "@prisma/client";
 
 async function findAllListHistory(userId: number) {
   const allListsHistory = await historyRepository.findAllFinishedList(userId);

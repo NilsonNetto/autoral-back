@@ -1,7 +1,8 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "@/Middlewares";
 import httpStatus from "http-status";
-import localService, { localParams } from "@/Services/local-service";
+import localService from "@/Services/local-service";
+import { localParams } from "@/Repositories/local-repository";
 
 export async function listLocalsGet(req: AuthenticatedRequest, res: Response) {
   const listId = Number(req.params.listId);

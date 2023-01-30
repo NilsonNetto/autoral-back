@@ -1,7 +1,6 @@
 import { invalidListOwnerError, invalidUserIdError, cannotFinishListError, invalidListIdError, invalidListStatusError } from "@/Errors";
 import listRepository from "@/Repositories/list-repository";
 import localRepository, {localParams} from "@/Repositories/local-repository"
-import { listStatus } from "@prisma/client";
 
 async function findListLocals(listId: number) {
   const listLocals = await localRepository.findLocalByListId(listId);
@@ -31,7 +30,7 @@ async function verifyListId(listId: number) {
     throw invalidListIdError();
   }
 
-  if(list.status !== listStatus.open) {
+  if(list.finished === true) {
     throw invalidListStatusError();
   }
 

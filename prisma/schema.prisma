@@ -7,67 +7,68 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model items {
-  id               Int                @id @default(autoincrement())
-  name             String             @db.VarChar(255)
-  createdAt        DateTime           @default(now()) @db.Timestamp(6)
-  updatedAt        DateTime?          @db.Timestamp(6)
-  listsLocalsItems listsLocalsItems[]
+model ItemsName {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(255)
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime? @db.Timestamp(6)
+  Items     Items[]
 }
 
-model lists {
+model Lists {
   id          Int           @id @default(autoincrement())
   name        String        @db.VarChar(255)
-  status      listStatus    @default(open)
+  finished    Boolean       @default(false)
   createdAt   DateTime      @default(now()) @db.Timestamp(6)
   updatedAt   DateTime?     @db.Timestamp(6)
-  listsLocals listsLocals[]
-  usersLists  usersLists[]
+  ListsLocals ListsLocals[]
+  UsersLists  UsersLists[]
 }
 
-model listsLocalsItems {
+model Items {
   id           Int         @id @default(autoincrement())
   listLocalsId Int
   itemId       Int
   checked      Boolean     @default(false)
   quantity     Int?
-  unit         itemUnit    @default(un)
+  unit         ItemUnit    @default(un)
   createdAt    DateTime    @default(now()) @db.Timestamp(6)
   updatedAt    DateTime?   @db.Timestamp(6)
-  items        items       @relation(fields: [itemId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  listsLocals  listsLocals @relation(fields: [listLocalsId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ItemName     ItemsName   @relation(fields: [itemId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ListsLocals  ListsLocals @relation(fields: [listLocalsId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model listsLocals {
-  id              Int                @id @default(autoincrement())
-  listId          Int
-  localId         Int
-  createdAt       DateTime           @default(now()) @db.Timestamp(6)
-  updatedAt       DateTime?          @db.Timestamp(6)
-  lists           lists              @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  locals          locals             @relation(fields: [localId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  listLocalsItems listsLocalsItems[]
+model ListsLocals {
+  id         Int        @id @default(autoincrement())
+  listId     Int
+  localId    Int
+  finished   Boolean    @default(false)
+  createdAt  DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime?  @db.Timestamp(6)
+  Lists      Lists      @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  LocalsName LocalsName @relation(fields: [localId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Items      Items[]
 }
 
-model locals {
+model LocalsName {
   id          Int           @id @default(autoincrement())
   name        String        @db.VarChar(255)
   createdAt   DateTime      @default(now()) @db.Timestamp(6)
   updatedAt   DateTime?     @db.Timestamp(6)
-  listsLocals listsLocals[]
+  ListsLocals ListsLocals[]
 }
 
-model sessions {
+model Sessions {
   id        Int       @id @default(autoincrement())
   userId    Int
   token     String
   valid     Boolean   @default(true)
   createdAt DateTime  @default(now()) @db.Timestamp(6)
   updatedAt DateTime? @db.Timestamp(6)
-  users     users     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Users     Users     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-model users {
+model Users {
   id             Int          @id @default(autoincrement())
   email          String       @unique @db.VarChar(255)
   password       String
@@ -75,11 +76,11 @@ model users {
   profilePicture String?
   createdAt      DateTime     @default(now()) @db.Timestamp(6)
   updatedAt      DateTime?    @db.Timestamp(6)
-  sessions       sessions[]
-  usersLists     usersLists[]
+  Sessions       Sessions[]
+  UsersLists     UsersLists[]
 }
 
-model usersLists {
+model UsersLists {
   id        Int       @id @default(autoincrement())
   userId    Int
   listId    Int
@@ -87,17 +88,11 @@ model usersLists {
   shared    Boolean
   createdAt DateTime  @default(now()) @db.Timestamp(6)
   updatedAt DateTime? @db.Timestamp(6)
-  lists     lists     @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users     users     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Lists     Lists     @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Users     Users     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-enum listStatus {
-  open
-  finished
-  deleted
-}
-
-enum itemUnit {
+enum ItemUnit {
   kgs
   un
 }

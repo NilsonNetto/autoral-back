@@ -1,5 +1,5 @@
 import { invalidListOwnerError, invalidUserIdError, cannotFinishListError, invalidListIdError, invalidListStatusError } from "@/Errors";
-import itemRepository, {insertItemParams, listLocalsItemsParams} from "@/Repositories/item-repository";
+import itemRepository, {insertItemParams, ItemsParams} from "@/Repositories/item-repository";
 import listRepository from "@/Repositories/list-repository";
 
 async function findListLocalItems(listLocalId: number) {
@@ -11,7 +11,7 @@ async function findListLocalItems(listLocalId: number) {
 async function createItem(listLocalsId: number, itemData: insertItemParams) {
   const item = await verifyItem(itemData.name);
 
-  const listLocalsItemsParams: listLocalsItemsParams = {
+  const listLocalsItemsParams: ItemsParams = {
     listLocalsId,
     itemId: item?.id,
     checked: itemData.checked,
@@ -36,7 +36,7 @@ async function verifyItem(itemName: string) {
   return itemRepository.findItemByName(itemName);
 }
 
-async function createListLocalsItems(data: listLocalsItemsParams) {
+async function createListLocalsItems(data: ItemsParams) {
   return itemRepository.createListLocalsItems(data);
 }
 
