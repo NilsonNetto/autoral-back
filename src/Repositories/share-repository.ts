@@ -1,10 +1,11 @@
 import { prisma } from "@/Configs";
-import { LocalsName, ShareRequests } from "@prisma/client";
+import { ShareRequests } from "@prisma/client";
 
 async function findUserLists(userId: number) {
   return prisma.shareRequests.findMany({
     where: {
-      userId
+      userId,
+      accepted: true
     },
     include: {
       Lists: true
@@ -19,6 +20,19 @@ async function findUserOwnedLists(userId: number) {
     },
     include: {
       Lists: true
+    }
+  })
+}
+
+async function findShareRequests(userId: number) {
+  return prisma.shareRequests.findMany({
+    where: {
+      userId,
+      pending: true
+    },
+    include: {
+      Lists: true,
+      OwnerId: true
     }
   })
 }
@@ -66,6 +80,7 @@ export type shareRequestParams = Pick<ShareRequests, "listId" | "ownerId" | "use
 const shareRepository = {
   findUserLists,
   findUserOwnedLists,
+  findShareRequests,
   createShareRequest,
   findShareRequestById,
   updateAcceptedRequest,

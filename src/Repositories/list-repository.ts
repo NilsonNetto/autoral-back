@@ -2,13 +2,24 @@ import { prisma } from "@/Configs";
 import { Lists } from "@prisma/client";
 
 async function findListsByUserId(userId: number) {
-  return prisma.usersLists.findMany({
+  return prisma.usersLists.findMany({    
     where: {
       userId,
-      shared: true
+      shared: true,
+      Lists :{
+        finished: false
+      }
     },
-    include: {
-      Lists: true
+    select:{
+      id: true,
+      owner: true,
+      Lists: {
+        select: {
+          id: true,
+          name: true,
+          createdAt: true, 
+        },
+      }
     },
     orderBy: {
       createdAt: "desc"

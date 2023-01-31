@@ -11,6 +11,6 @@ listRouter
   .get("/:listId", validateParams(listIdSchema), listNameGet)
   .post("/", validateBody(listSchema), listPost)
   .post("/finish/:listId", validateParams(listIdSchema), finishListPost)
-  .delete("/delete/:listId", validateParams(listIdSchema), ListDelete)
+  .delete("/:listId", validateParams(listIdSchema), ListDelete)
 
 export { listRouter };

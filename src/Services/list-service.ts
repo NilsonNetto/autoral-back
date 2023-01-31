@@ -14,9 +14,9 @@ async function createList(userId: number, listData: listParams) {
   //fazer uma transaction aqui, só insere a lista se fizer um userList
   const createdList = await listRepository.createList(listData)
   
-  const createdUserlist = await listRepository.createUserList(userId, createdList.id)
+  await listRepository.createUserList(userId, createdList.id)
   
-  return createdUserlist;
+  return createdList;
 }
 
 async function finishList(userId: number, listId: number ) {

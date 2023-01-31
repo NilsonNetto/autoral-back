@@ -27,6 +27,18 @@ export async function sharedOwnedListsGet(req: AuthenticatedRequest, res: Respon
   }
 }
 
+export async function shareRequestGet(req: AuthenticatedRequest, res: Response) {
+  const userId = req.userId;
+
+  try {
+    const userRequests = await shareService.findShareRequests(userId);
+    
+    return res.status(httpStatus.OK).send(userRequests);
+  } catch (error) {
+    return res.status(httpStatus.UNAUTHORIZED).send(error.message);
+  }
+}
+
 export async function shareRequestPost(req: AuthenticatedRequest, res: Response) {
   const userId = req.userId;
   const listId = Number(req.params.listId);

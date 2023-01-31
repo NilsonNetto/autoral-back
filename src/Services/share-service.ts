@@ -16,6 +16,12 @@ async function findSharedOwnerLists(userId: number) {
   return sharedLists;
 }
 
+async function findShareRequests(userId: number) {
+  const shareRequests = await shareRepository.findShareRequests(userId);
+
+  return shareRequests;
+}
+
 async function createSharedRequest(userId: number, listId: number, userEmail: string) {
   const shareUser = await verifyEmail(userEmail);
 
@@ -65,6 +71,7 @@ async function verifyRequest(requestId: number) {
 const shareService = {
   findSharedLists,
   findSharedOwnerLists,
+  findShareRequests,
   createSharedRequest,
   updateAcceptedRequest,
   updateRefusedRequest
