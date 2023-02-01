@@ -8,6 +8,9 @@ async function findLocalsByListId(listId: number) {
     },
     include: {
       LocalsName : true
+    },
+    orderBy :{
+      createdAt: 'asc'
     }
   })
 }

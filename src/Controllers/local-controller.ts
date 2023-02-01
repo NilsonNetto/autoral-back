@@ -33,7 +33,7 @@ export async function finishLocalPost(req: AuthenticatedRequest, res: Response) 
   const listLocalId = Number(req.params.listLocalId);
 
   try {
-    const finishedList = await localService.findListLocals(listLocalId)
+    const finishedList = await localService.updateFinishedLocal(listLocalId)
     
     return res.status(httpStatus.OK).send(finishedList);
   } catch (error) {

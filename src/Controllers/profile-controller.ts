@@ -3,6 +3,7 @@ import { AuthenticatedRequest } from "@/Middlewares";
 import httpStatus from "http-status";
 import profileService from "@/Services/profile-service";
 import { registerParams } from "@/Services/authentication-service";
+import { pictureParams } from "@/Repositories/user-repository";
 
 export async function userProfileGet(req: AuthenticatedRequest, res: Response) {
   const userId = req.userId;
@@ -31,10 +32,10 @@ export async function userProfilePut(req: AuthenticatedRequest, res: Response) {
 
 export async function userPicutrePut(req: AuthenticatedRequest, res: Response) {
   const userId = req.userId;
-  const profilePicture: registerParams = req.body;
+  const profilePicture: pictureParams = req.body;
 
   try {
-    const userProfileUpdated = await profileService.updateProfile(userId, profilePicture);
+    const userProfileUpdated = await profileService.updatePicture(userId, profilePicture);
     
     return res.status(httpStatus.OK).send(userProfileUpdated);
   } catch (error) {

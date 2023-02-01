@@ -7,8 +7,21 @@ async function findUserLists(userId: number) {
       userId,
       accepted: true
     },
-    include: {
-      Lists: true
+    select: {
+      id: true,
+      OwnerId :{
+        select: {
+          id: true,
+          email: true
+        }
+      },
+      Lists: {
+        select: {
+          id: true,
+          name: true,
+          createdAt: true
+        }
+      }
     }
   })
 }
@@ -18,8 +31,23 @@ async function findUserOwnedLists(userId: number) {
     where: {
       ownerId: userId
     },
-    include: {
-      Lists: true
+    select: {
+      id: true,
+      pending: true,
+      accepted: true,
+      UserId: {
+        select: {
+          id: true,
+          email: true
+        }
+      },
+      Lists: {
+        select: {
+          id: true,
+          name: true,
+          createdAt: true
+        }
+      }
     }
   })
 }

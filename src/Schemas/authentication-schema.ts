@@ -1,3 +1,4 @@
+import { pictureParams } from "@/Repositories/user-repository";
 import { registerParams, loginParams } from "@/Services/authentication-service";
 import Joi from "joi";
 
@@ -12,7 +13,7 @@ export const loginSchema = Joi.object<loginParams>({
   password: Joi.string().min(6).required()
 });
 
-export const pictureSchema = Joi.object<{profilePicture: string}>({
+export const pictureSchema = Joi.object<pictureParams>({
   profilePicture: Joi.string().uri().required()
 });
 
