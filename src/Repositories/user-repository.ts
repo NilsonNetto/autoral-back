@@ -1,7 +1,7 @@
 import { prisma } from "@/Configs";
-import { Prisma, Users } from "@prisma/client";
+import { Users } from "@prisma/client";
 
-async function createUser(data: Prisma.UsersUncheckedCreateInput) {
+async function createUser(data: registerParams) {
   return prisma.users.create({
     data
   })
@@ -29,7 +29,7 @@ async function findUserByEmail(email: string) {
   })
 }
 
-async function updateUserByUserId(id: number, data: Prisma.UsersUncheckedCreateInput) {
+async function updateUserByUserId(id: number, data: registerParams) {
   return prisma.users.update({
     where: {
       id
@@ -46,6 +46,10 @@ async function updateUserPictureByUserId(id: number, data: pictureParams) {
     data
   })
 }
+
+export type loginParams = Pick<Users, "email" | "password">;
+
+export type registerParams = Pick<Users, "name" | "email" | "password">;
 
 export type pictureParams = Pick<Users, "profilePicture">;
 

@@ -1,11 +1,13 @@
 import { prisma } from "@/Configs";
-import { Prisma } from "@prisma/client";
+import { Sessions } from "@prisma/client";
 
-async function createSession(data: Prisma.SessionsUncheckedCreateInput) {
+async function createSession(data: sessionParams) {
   return prisma.sessions.create({
     data
   })
 }
+
+export type sessionParams = Pick<Sessions, "userId" | "token">;
 
 const authenticationRepository = {
   createSession

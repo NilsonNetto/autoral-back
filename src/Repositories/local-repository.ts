@@ -31,6 +31,14 @@ async function findLocalByName(data: localParams) {
   })
 }
 
+async function findlistLocalById(id: number) {
+  return prisma.listsLocals.findFirst({
+    where:{
+      id
+    }
+  })
+}
+
 async function createLocal(data: localParams) {
   return prisma.localsName.create({
     data
@@ -82,6 +90,7 @@ export type localParams = Pick<LocalsName, "name">
 const localRepository = {
   findLocalsByListId,
   findLocalByName,
+  findlistLocalById,
   createLocal,
   createListLocal,
   updateFinishedLocal,

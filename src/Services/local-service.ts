@@ -1,4 +1,6 @@
-import { invalidListOwnerError, invalidUserIdError, cannotFinishListError, invalidListIdError, invalidListStatusError } from "@/Errors";
+import { cannotModifyError, invalidListIdError, invalidListStatusError } from "@/Errors";
+import { alreadyFinishedError } from "@/Errors/already-finished-error";
+import { notFoundDataError } from "@/Errors/not-found-data-error";
 import itemRepository from "@/Repositories/item-repository";
 import listRepository from "@/Repositories/list-repository";
 import localRepository, {localParams} from "@/Repositories/local-repository"
@@ -6,11 +8,17 @@ import localRepository, {localParams} from "@/Repositories/local-repository"
 async function findListLocals(listId: number) {
   const listLocals = await localRepository.findLocalsByListId(listId);
 
+  if(!listLocals){
+    throw notFoundDataError();
+  }
+
   return listLocals;
 }
 
-async function createLocal(listId: number, localData: localParams) {
+async function createLocal(userId: number, listId: number, localData: localParams) {
   await verifyListId(listId);
+  
+  await verifyUserList(userId, listId);
 
   const local = await verifyLocal(localData);
 
@@ -24,12 +32,19 @@ async function createLocal(listId: number, localData: localParams) {
   return createListLocal(listId, local.id);
 }
 
-async function updateFinishedLocal(listLocalId: number) {
+async function updateFinishedLocal(userId: number, listLocalId: number) {
+  const listLocal = await verifyListLocal(listLocalId);
+
+  await verifyUserList(userId, listLocal.listId);
 
   return localRepository.updateFinishedLocal(listLocalId);
 }
 
-async function updateLocalName(listLocalId: number, localData: localParams) {
+async function updateLocalName(userId: number, listLocalId: number, localData: localParams) {
+  const listLocal = await verifyListLocal(listLocalId);
+
+  await verifyUserList(userId, listLocal.listId);
+  
   const local = await verifyLocal(localData);
 
   if(!local) {
@@ -42,7 +57,11 @@ async function updateLocalName(listLocalId: number, localData: localParams) {
   return updateListLocal(listLocalId, local.id);
 }
 
-async function deleteListLocal(listLocalId: number) {
+async function deleteListLocal(userId: number, listLocalId: number) {
+  const listLocal = await verifyListLocal(listLocalId);
+
+  await verifyUserList(userId, listLocal.listId);
+
   //fazer transition disso aqui
   await itemRepository.deleteItemByListLocalId(listLocalId);
  
@@ -61,6 +80,30 @@ async function verifyListId(listId: number) {
   }
 
   return list;
+}
+
+async function verifyListLocal(listLocalId: number) {
+  const listLocal = await localRepository.findlistLocalById(listLocalId);
+
+  if(!listLocal){
+    throw notFoundDataError();
+  }
+
+  if(listLocal.finished){
+    throw alreadyFinishedError();
+  }
+
+  return listLocal;
+}
+
+async function verifyUserList(userId: number, listId: number) {
+  const userList = await listRepository.findUserListByUserIdAndListId(userId, listId)
+
+  if(!userList || !userList.shared){
+    throw cannotModifyError();
+  }
+
+  return userList;
 }
 
 async function verifyLocal(localData: localParams) {

@@ -1,13 +1,27 @@
-import { invalidListOwnerError, cannotFinishListError } from "@/Errors";
+import { invalidListOwnerError, cannotModifyError } from "@/Errors";
 import { invalidListIdError } from "@/Errors";
+import { alreadyFinishedError } from "@/Errors/already-finished-error";
+import { notFoundDataError } from "@/Errors/not-found-data-error";
 import listRepository, {listParams} from "@/Repositories/list-repository"
 
 async function findList(userId: number) {
-  return listRepository.findListsByUserId(userId);
+  const userLists = listRepository.findListsByUserId(userId);
+  
+  if(!userLists){
+    throw notFoundDataError();
+  }
+
+  return userLists;
 }
 
 async function findListById(listId: number) {
-  return listRepository.findListByListId(listId);
+  const listName = listRepository.findListByListId(listId);
+  
+  if(!listName){
+    throw notFoundDataError();
+  }
+  
+  return listName;
 }
 
 async function createList(userId: number, listData: listParams) {
@@ -21,11 +35,15 @@ async function createList(userId: number, listData: listParams) {
 
 async function finishList(userId: number, listId: number ) {
   const list = await verifyList(listId);
+  
+  if(list.finished){
+    throw alreadyFinishedError();
+  }
  
   const userList = await listRepository.findUserListByUserIdAndListId(userId, listId);
 
   if(!userList || !userList.shared){
-    throw cannotFinishListError();
+    throw cannotModifyError();
   }
 
   const finishedList = await listRepository.updateFinishedList(list.id);
@@ -65,12 +83,6 @@ async function verifyOwner(ownerUserId: number, listId: number) {
   }
 
   return userList;
-}
-
-export type shareListParams = {
-  ownerUserId: number,
-  sharedUserId: number,
-  listId: number,
 }
 
 const listService = {

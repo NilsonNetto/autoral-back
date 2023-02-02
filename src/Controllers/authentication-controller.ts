@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
-import authenticationService, { loginParams, registerParams } from "@/Services/authentication-service";
+import authenticationService from "@/Services/authentication-service";
+import { loginParams, registerParams } from "@/Repositories/user-repository"; 
 
 export async function registerPost(req: Request, res: Response) {
   const userData: registerParams = req.body;
@@ -10,7 +11,7 @@ export async function registerPost(req: Request, res: Response) {
     
     return res.sendStatus(httpStatus.CREATED);
   } catch (error) {
-    return res.status(httpStatus.UNAUTHORIZED).send(error.message);
+    return res.status(httpStatus.CONFLICT).send(error.message);
   }
 }
 

@@ -1,15 +1,26 @@
-import { invalidListOwnerError, invalidUserIdError, cannotFinishListError, invalidListIdError, invalidListStatusError } from "@/Errors";
+import { alreadyFinishedError, cannotModifyError, invalidListIdError, invalidListStatusError, notFoundDataError } from "@/Errors";
 import itemRepository, {insertItemParams, ItemsParams, updateItemParams} from "@/Repositories/item-repository";
 import listRepository from "@/Repositories/list-repository";
+import localRepository from "@/Repositories/local-repository";
 
 async function findListLocalItems(listLocalId: number) {
   const listItems = await itemRepository.findListItemsByListLocalId(listLocalId);
 
+  if(!listItems){
+    throw notFoundDataError();
+  }
+
   return listItems;
 }
 
-async function createItem(listLocalsId: number, itemData: insertItemParams) {
-  const itemName = await verifyItem(itemData.name);
+async function createItem(userId: number, listLocalsId: number, itemData: insertItemParams) {
+  const listLocal = await verifyListLocal(listLocalsId);
+
+  await verifyList(listLocal.listId);
+
+  await verifyUserList(userId, listLocal.listId);
+
+  const itemName = await verifyItemName(itemData.name);
 
   const ItemParam: ItemsParams = {
     listLocalsId,
@@ -31,12 +42,30 @@ async function createItem(listLocalsId: number, itemData: insertItemParams) {
   return insertItem(ItemParam);
 }
 
-async function checkItem(itemId: number) {
-  return itemRepository.updateCheckedItem(itemId);
+async function checkOrUncheckItem(userId: number, itemId: number) {
+  const item = await verifyItem(itemId);
+
+  const listLocal = await verifyListLocal(item.listLocalsId);
+
+  await verifyList(listLocal.listId);
+
+  await verifyUserList(userId, listLocal.listId);
+
+  const checkOrUncheck = !item.checked;
+
+  return itemRepository.updateItemCheck(itemId, checkOrUncheck);
 }
 
-async function updateItem(itemId: number, itemData: insertItemParams) {
-  const itemName = await verifyItem(itemData.name);
+async function updateItem(userId: number, itemId: number, itemData: insertItemParams) {
+  const item = await verifyItem(itemId);
+
+  const listLocal = await verifyListLocal(item.listLocalsId);
+
+  await verifyList(listLocal.listId);
+
+  await verifyUserList(userId, listLocal.listId);
+  
+  const itemName = await verifyItemName(itemData.name);
 
   const updateItemParam: updateItemParams = {
     itemNameId: itemName?.id,
@@ -57,11 +86,63 @@ async function updateItem(itemId: number, itemData: insertItemParams) {
   return insertUpdatedItem(itemId, updateItemParam);
 }
 
-async function deleteItem(itemId: number) {
+async function deleteItem(userId: number, itemId: number) {
+  const item = await verifyItem(itemId);
+
+  const listLocal = await verifyListLocal(item.listLocalsId);
+
+  await verifyList(listLocal.listId);
+
+  await verifyUserList(userId, listLocal.listId);
+  
   return itemRepository.deleteItem(itemId);
 }
 
-async function verifyItem(itemName: string) {
+async function verifyListLocal(listLocalId: number) {
+  const listLocal = await localRepository.findlistLocalById(listLocalId);
+  
+  if(!listLocal){
+    throw notFoundDataError();
+  }
+  
+  if(listLocal.finished){
+    throw alreadyFinishedError();
+  }
+  
+  return listLocal;
+}
+
+async function verifyList(listId: number) {
+  const list = await listRepository.findListByListId(listId);
+
+  if(list.finished) {
+    throw alreadyFinishedError();
+  }
+
+  return list;
+}
+
+async function verifyUserList(userId: number, listId: number) {
+  const userList = await listRepository.findUserListByUserIdAndListId(userId, listId)
+
+  if(!userList || !userList.shared){
+    throw cannotModifyError();
+  }
+
+  return userList;
+}
+
+async function verifyItem(itemId: number) {
+  const item = itemRepository.findItemById(itemId);
+
+  if(!item){
+    throw notFoundDataError();
+  }
+
+  return item;
+}
+
+async function verifyItemName(itemName: string) {
   return itemRepository.findItemByName(itemName);
 }
 
@@ -76,7 +157,7 @@ async function insertUpdatedItem(itemId: number, data: updateItemParams) {
 const itemService = {
   findListLocalItems,
   createItem,
-  checkItem,
+  checkOrUncheckItem,
   updateItem,
   deleteItem
 };

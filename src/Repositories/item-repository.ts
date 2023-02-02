@@ -39,6 +39,14 @@ async function findListItemsByListLocalId(listLocalId: number) {
   })
 }
 
+async function findItemById(id: number) {
+  return prisma.items.findFirst({
+    where:{
+      id
+    }
+  })
+}
+
 async function findItemByName(name: string) {
   return prisma.itemsName.findFirst({
     where:{
@@ -61,13 +69,13 @@ async function createItem(data: ItemsParams) {
   })
 }
 
-async function updateCheckedItem(itemId: number) {
+async function updateItemCheck(itemId: number, checkOrUncheck: boolean) {
   return prisma.items.update({
     where: {
       id: itemId
     },
     data: {
-      checked: true
+      checked: checkOrUncheck
     }
   })
 }
@@ -112,10 +120,11 @@ export type updateItemParams = Omit<ItemsParams, "listLocalsId">
 
 const itemRepository = {
   findListItemsByListLocalId,
+  findItemById,
   findItemByName,
   createItemName,
   createItem,
-  updateCheckedItem,
+  updateItemCheck,
   updateItem,
   deleteItem,
   deleteItemByListLocalId

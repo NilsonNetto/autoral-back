@@ -1,5 +1,5 @@
 import { pictureParams } from "@/Repositories/user-repository";
-import { registerParams, loginParams } from "@/Services/authentication-service";
+import { registerParams, loginParams } from "@/Repositories/user-repository";
 import Joi from "joi";
 
 export const registerSchema = Joi.object<registerParams>({

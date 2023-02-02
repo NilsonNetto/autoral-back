@@ -20,7 +20,7 @@ const app = express();
 app
   .use(cors())
   .use(express.json())
-  .get("/status", (req, res) => res.send("OK! Server is up"))
+  .get("/serverStatus", (req, res) => res.send("OK! Server is up"))
   .use("/auth", authenticationRouter)
   .use("/list", listRouter)
   .use("/local", localRouter)

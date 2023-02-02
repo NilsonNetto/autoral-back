@@ -11,7 +11,7 @@ export async function listsGet(req: AuthenticatedRequest, res: Response) {
 
     return res.status(httpStatus.OK).send(userLists);
   } catch (error) {
-    return res.status(httpStatus.BAD_REQUEST).send(error.message);
+    return res.status(httpStatus.NOT_FOUND).send(error.message);
   }
 }
 
@@ -23,7 +23,7 @@ export async function listNameGet(req: AuthenticatedRequest, res: Response) {
 
     return res.status(httpStatus.OK).send(listName);
   } catch (error) {
-    return res.status(httpStatus.BAD_REQUEST).send(error.message);
+    return res.status(httpStatus.NOT_FOUND).send(error.message);
   }
 }
 
@@ -49,7 +49,13 @@ export async function finishListPost(req: AuthenticatedRequest, res: Response) {
     
     return res.status(httpStatus.OK).send(finishedList);
   } catch (error) {
-    return res.status(httpStatus.BAD_REQUEST).send(error.message);
+    if(error.name === "InvalidListIdError"){
+      return res.status(httpStatus.NOT_FOUND).send(error.message);
+    }
+    if(error.name === "AlreadyFinishedError"){
+      return res.status(httpStatus.CONFLICT).send(error.message);
+    }
+    return res.status(httpStatus.FORBIDDEN).send(error.message);
   }
 }
 
@@ -60,8 +66,11 @@ export async function ListDelete(req: AuthenticatedRequest, res: Response) {
   try {
     const deleteList = await listService.deleteList(userId, listId)
     
-    return res.status(httpStatus.OK).send();
+    return res.status(httpStatus.OK).send(deleteList);
   } catch (error) {
-    return res.status(httpStatus.UNAUTHORIZED).send(error.message);
+    if(error.name === "InvalidListIdError"){
+      return res.status(httpStatus.NOT_FOUND).send(error.message);
+    }
+    return res.status(httpStatus.FORBIDDEN).send(error.message);
   }
 }

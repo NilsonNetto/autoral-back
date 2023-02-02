@@ -2,8 +2,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { duplicatedEmailError, credentialError } from "@/Errors";
-import authenticationRepository from "@/Repositories/authentication-repository"
-import userRepository from "@/Repositories/user-repository";
+import authenticationRepository, { sessionParams } from "@/Repositories/authentication-repository"
+import userRepository, { loginParams, registerParams } from "@/Repositories/user-repository";
 
 async function register(data: registerParams) {
   
@@ -26,7 +26,7 @@ async function login(data: loginParams) {
 
   const token = await createSession(user.id);
 
-  const response: sessionReponse = {
+  const response = {
     user: {
       userId: user.id,
       profilePicture: user.profilePicture
@@ -74,30 +74,6 @@ async function createSession(userId: number) {
   await authenticationRepository.createSession(sessionData)
   
   return token;
-}
-
-export type loginParams = {
-  email: string,
-  password: string
-}
-
-export type registerParams = {
-  email: string,
-  password: string,
-  name: string
-}
-
-export type sessionParams = {
-  userId: number,
-  token: string
-}
-
-export type sessionReponse = {
-  user: {
-    userId: number,
-    profilePicture: string,
-  },
-  token: string
 }
 
 const authenticationService = {
