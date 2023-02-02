@@ -5,7 +5,7 @@ import shareRepository, { shareRequestParams } from "@/Repositories/share-reposi
 import userRepository from "@/Repositories/user-repository";
 
 async function findSharedLists(userId: number) {
-  const sharedLists = await shareRepository.findUserLists(userId);
+  const sharedLists = await shareRepository.findUserSharedLists(userId);
 
   return sharedLists;
 }

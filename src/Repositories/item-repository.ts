@@ -6,11 +6,27 @@ async function findListItemsByListLocalId(listLocalId: number) {
     where: {
       id: listLocalId
     },
-    include: {
-      LocalsName: true,
+    select:{
+      id: true,
+      finished: true,
+      listId: true,
+      LocalsName: {
+        select: {
+          id: true,
+          name: true
+        },
+      },
       Items: {
-        include: {
-          ItemName: true
+        select: {
+          id: true,
+          checked: true,
+          quantity: true,
+          unit: true,
+          ItemName: {
+            select: {
+              name: true,
+            }
+          }
         },
         orderBy: {
           createdAt: "asc"

@@ -1,7 +1,7 @@
 import { prisma } from "@/Configs";
 import { ShareRequests } from "@prisma/client";
 
-async function findUserLists(userId: number) {
+async function findUserSharedLists(userId: number) {
   return prisma.shareRequests.findMany({
     where: {
       userId,
@@ -12,7 +12,8 @@ async function findUserLists(userId: number) {
       OwnerId :{
         select: {
           id: true,
-          email: true
+          email: true,
+          name: true
         }
       },
       Lists: {
@@ -22,6 +23,9 @@ async function findUserLists(userId: number) {
           createdAt: true
         }
       }
+    },
+    orderBy: {
+      createdAt: "desc"
     }
   })
 }
@@ -38,7 +42,8 @@ async function findUserOwnedLists(userId: number) {
       UserId: {
         select: {
           id: true,
-          email: true
+          email: true,
+          name: true
         }
       },
       Lists: {
@@ -48,6 +53,9 @@ async function findUserOwnedLists(userId: number) {
           createdAt: true
         }
       }
+    },
+    orderBy: {
+      createdAt: "desc"
     }
   })
 }
@@ -58,9 +66,25 @@ async function findShareRequests(userId: number) {
       userId,
       pending: true
     },
-    include: {
-      Lists: true,
-      OwnerId: true
+    select:{
+      id: true,
+      Lists: {
+        select: {
+          id: true,
+          name: true,
+          createdAt: true
+        }
+      },
+      OwnerId: {
+        select: {
+          id: true,
+          email: true,
+          name: true
+        }
+      }
+    },
+    orderBy: {
+      createdAt: "desc"
     }
   })
 }
@@ -106,7 +130,7 @@ async function updateRefusedRequest(id: number) {
 export type shareRequestParams = Pick<ShareRequests, "listId" | "ownerId" | "userId">
 
 const shareRepository = {
-  findUserLists,
+  findUserSharedLists,
   findUserOwnedLists,
   findShareRequests,
   createShareRequest,

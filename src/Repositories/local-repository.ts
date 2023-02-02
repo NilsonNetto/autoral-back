@@ -6,8 +6,16 @@ async function findLocalsByListId(listId: number) {
     where: {
       listId
     },
-    include: {
-      LocalsName : true
+    select:{
+      id: true,
+      listId: true,
+      finished: true,
+      LocalsName: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
     },
     orderBy :{
       createdAt: 'asc'

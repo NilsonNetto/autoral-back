@@ -11,6 +11,12 @@ async function findUserByUserId(id: number) {
   return prisma.users.findFirst({
     where: {
       id
+    },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      profilePicture: true
     }
   })
 }

@@ -31,6 +31,12 @@ async function findListByListId(id: number) {
   return prisma.lists.findFirst({
     where: {
       id
+    },
+    select: {
+      id: true,
+      name: true,
+      finished: true,
+      createdAt: true
     }
   })
 }
