@@ -103,6 +103,15 @@ async function findShareRequestById(id: number) {
   })
 }
 
+async function findShareRequestByUserIdAndListId(userId: number, listId: number) {
+  return prisma.shareRequests.findFirst({
+    where: {
+      userId,
+      listId
+    }
+  })
+}
+
 async function updateAcceptedRequest(id: number) {
   return prisma.shareRequests.update({
     where:{
@@ -127,6 +136,14 @@ async function updateRefusedRequest(id: number) {
   })
 }
 
+
+async function deleteShareRequest(id: number) {
+  return prisma.shareRequests.delete({
+    where: {
+      id
+    }
+  })
+}
 export type shareRequestParams = Pick<ShareRequests, "listId" | "ownerId" | "userId">
 
 const shareRepository = {
@@ -135,8 +152,10 @@ const shareRepository = {
   findShareRequests,
   createShareRequest,
   findShareRequestById,
+  findShareRequestByUserIdAndListId,
   updateAcceptedRequest,
-  updateRefusedRequest
+  updateRefusedRequest,
+  deleteShareRequest
 };
 
 export default shareRepository;

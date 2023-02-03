@@ -2,8 +2,7 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "@/Middlewares";
 import httpStatus from "http-status";
 import profileService from "@/Services/profile-service";
-import { registerParams } from "@/Services/authentication-service";
-import { pictureParams } from "@/Repositories/user-repository";
+import { pictureParams, registerParams } from "@/Repositories/user-repository";
 
 export async function userProfileGet(req: AuthenticatedRequest, res: Response) {
   const userId = req.userId;
@@ -13,7 +12,7 @@ export async function userProfileGet(req: AuthenticatedRequest, res: Response) {
     
     return res.status(httpStatus.OK).send(userProfile);
   } catch (error) {
-    return res.status(httpStatus.UNAUTHORIZED).send(error.message);
+    return res.status(httpStatus.NOT_FOUND).send(error.message);
   }
 }
 
@@ -26,6 +25,9 @@ export async function userProfilePut(req: AuthenticatedRequest, res: Response) {
     
     return res.status(httpStatus.OK).send(userProfileUpdated);
   } catch (error) {
+    if(error.name === 'DuplicatedEmailError'){
+      return res.status(httpStatus.CONFLICT).send(error.message);  
+    }
     return res.status(httpStatus.UNAUTHORIZED).send(error.message);
   }
 }

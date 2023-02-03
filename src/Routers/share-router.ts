@@ -1,5 +1,12 @@
 import { Router } from 'express';
-import { sharedListsGet, sharedOwnedListsGet, shareRequestGet, shareRequestPost, acceptRequestPost, refuseRequestPost, removeSharePost } from '@/Controllers';
+import {
+  sharedListsGet,
+  sharedOwnedListsGet,
+  shareRequestGet,
+  shareRequestPost,
+  acceptRequestPost,
+  refuseRequestPost,
+  removeSharePost } from '@/Controllers';
 import { authenticateToken, validateBody, validateParams } from '@/Middlewares';
 import { listIdSchema, userEmailSchema, requestIdSchema } from '@/Schemas';
 
@@ -13,6 +20,6 @@ shareRouter
   .post("/:listId", validateParams(listIdSchema), validateBody(userEmailSchema), shareRequestPost)
   .post("/accept/:requestId", validateParams(requestIdSchema), acceptRequestPost) 
   .post("/refuse/:requestId", validateParams(requestIdSchema), refuseRequestPost)
-  .post("/remove/:listId/:userId", validateParams(listIdSchema), removeSharePost) //rota para remover o compartilhamento com alguém(implementar)
+  .post("/remove/:requestId", validateParams(requestIdSchema), removeSharePost) //rota para remover o compartilhamento com alguém(implementar)
 
 export { shareRouter };

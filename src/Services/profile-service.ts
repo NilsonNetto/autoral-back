@@ -1,11 +1,14 @@
 import bcrypt from "bcrypt";
 
-import userRepository, { pictureParams } from "@/Repositories/user-repository";
-import { registerParams } from "./authentication-service";
-import { credentialError, duplicatedEmailError } from "@/Errors";
+import userRepository, { pictureParams, registerParams } from "@/Repositories/user-repository";
+import { duplicatedEmailError, notFoundDataError, unauthorizedError } from "@/Errors";
 
 async function findProfile(userId: number) {
   const userProfile = await userRepository.findUserByUserId(userId);
+
+  if(!userProfile){
+    throw notFoundDataError();
+  }
 
   return userProfile;
 }
@@ -42,7 +45,7 @@ async function verifyUser(userId: number) {
   const user = await userRepository.findUserByUserId(userId);
 
   if(!user){
-    throw credentialError();
+    throw unauthorizedError();
   }
 
   return user;

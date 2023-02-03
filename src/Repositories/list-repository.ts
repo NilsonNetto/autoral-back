@@ -90,6 +90,16 @@ async function updateFinishedList(listId: number) {
   })
 }
 
+async function deleteSharedUserList(userId: number, listId: number) {
+  return prisma.usersLists.deleteMany({
+    where: {
+      userId,
+      listId,
+      shared: true
+    }
+  })
+}
+
 export type listParams = Pick<Lists, "name">
 
 const listRepository = {
@@ -100,7 +110,7 @@ const listRepository = {
   createUserList,
   createSharedUserList,
   updateFinishedList,
-
+  deleteSharedUserList
 };
 
 export default listRepository;

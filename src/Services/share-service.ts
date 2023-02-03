@@ -1,4 +1,4 @@
-import { invalidListOwnerError, invalidUserIdError, cannotFinishListError, invalidListIdError, invalidListStatusError } from "@/Errors";
+import { alreadyAnsweredError, cannotShareListError, notFoundDataError, cannotModifyError, alreadySharedError } from "@/Errors";
 import { invalidUserEmailError } from "@/Errors/invalid-user-email-error";
 import listRepository from "@/Repositories/list-repository";
 import shareRepository, { shareRequestParams } from "@/Repositories/share-repository";
@@ -7,11 +7,19 @@ import userRepository from "@/Repositories/user-repository";
 async function findSharedLists(userId: number) {
   const sharedLists = await shareRepository.findUserSharedLists(userId);
 
+  if(!sharedLists){
+    throw notFoundDataError();
+  }
+
   return sharedLists;
 }
 
 async function findSharedOwnerLists(userId: number) {
   const sharedLists = await shareRepository.findUserOwnedLists(userId);
+
+  if(!sharedLists){
+    throw notFoundDataError();
+  }
 
   return sharedLists;
 }
@@ -19,11 +27,19 @@ async function findSharedOwnerLists(userId: number) {
 async function findShareRequests(userId: number) {
   const shareRequests = await shareRepository.findShareRequests(userId);
 
+  if(!shareRequests){
+    throw notFoundDataError();
+  }
+
   return shareRequests;
 }
 
 async function createSharedRequest(userId: number, listId: number, userEmail: string) {
   const shareUser = await verifyEmail(userEmail);
+
+  await verifyOwner(userId, listId);
+
+  await verifyShared(shareUser.id, listId);
 
   const createShareRequestParam: shareRequestParams = {
     listId,
@@ -39,7 +55,9 @@ async function createSharedRequest(userId: number, listId: number, userEmail: st
 async function updateAcceptedRequest(userId: number, requestId: number) {
   const shareRequest = await verifyRequest(requestId);
 
-  //fazer transaction disso e verificações da share
+  await verifyShareUser(userId, shareRequest.userId);
+
+  //fazer transaction disso
   await listRepository.createSharedUserList(userId, shareRequest.listId);
   const acceptedRequest = await shareRepository.updateAcceptedRequest(requestId);
 
@@ -47,11 +65,25 @@ async function updateAcceptedRequest(userId: number, requestId: number) {
 }
 
 async function updateRefusedRequest(userId: number, requestId: number) {
-  await verifyRequest(requestId);
+  const shareRequest = await verifyRequest(requestId);
 
+  await verifyShareUser(userId, shareRequest.userId);
+  
   const refusedRequest = await shareRepository.updateRefusedRequest(requestId);
 
   return refusedRequest;
+}
+
+async function removeSharedList(userId: number, requestId: number) {
+  const shareRequest = await verifyAnsweredRequest(userId, requestId);
+
+  if(shareRequest.accepted){
+    //fazer transaction disso
+    await removeUserList(shareRequest.userId, shareRequest.listId)
+    return removeShareRequest(requestId);
+  }
+
+  return removeShareRequest(requestId);
 }
 
 async function verifyEmail(email: string) {
@@ -64,8 +96,73 @@ async function verifyEmail(email: string) {
   return user;
 }
 
+async function verifyOwner(userId: number, listId: number) {
+  const userList = await listRepository.findUserListByUserIdAndListId(userId, listId);
+
+  if(!userList){
+    throw notFoundDataError();
+  }
+
+  if(!userList.owner){
+    throw cannotShareListError();
+  }
+
+  return userList;
+}
+
+async function verifyShared(userId: number, listId: number) {
+  const shareRequest = await shareRepository.findShareRequestByUserIdAndListId(userId, listId);
+
+  if(shareRequest){
+    throw alreadySharedError();
+  }
+
+  return shareRequest;
+}
+
 async function verifyRequest(requestId: number) {
-  return await shareRepository.findShareRequestById(requestId);
+  const shareRequest = await shareRepository.findShareRequestById(requestId);
+  
+  if(!shareRequest){
+    throw notFoundDataError();
+  }
+
+  if(!shareRequest.pending){
+    throw alreadyAnsweredError();
+  }
+
+  return shareRequest;
+}
+
+async function verifyShareUser(userId: number, sharedUserId: number) {
+  if(sharedUserId !== userId){
+    throw cannotModifyError();
+  }
+}
+
+async function verifyAnsweredRequest(userId: number, requestId: number) {
+  const shareRequest = await shareRepository.findShareRequestById(requestId);
+
+  if(!shareRequest){
+    throw notFoundDataError();
+  }
+
+  const isOwner = shareRequest.ownerId === userId;
+  const isUser = shareRequest.userId === userId;
+
+  if(!isOwner && !isUser){
+    throw cannotModifyError();
+  }
+
+  return shareRequest;
+}
+
+async function removeUserList(userId: number, listId: number) {
+  return listRepository.deleteSharedUserList(userId, listId);
+}
+
+async function removeShareRequest(requestId: number) {
+  return shareRepository.deleteShareRequest(requestId);
 }
 
 const shareService = {
@@ -74,7 +171,8 @@ const shareService = {
   findShareRequests,
   createSharedRequest,
   updateAcceptedRequest,
-  updateRefusedRequest
+  updateRefusedRequest,
+  removeSharedList
 };
 
 export default shareService;
