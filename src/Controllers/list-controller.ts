@@ -40,25 +40,6 @@ export async function listPost(req: AuthenticatedRequest, res: Response) {
   }
 }
 
-export async function finishListPost(req: AuthenticatedRequest, res: Response) {
-  const userId = req.userId;
-  const listId = Number(req.params.listId);
-
-  try {
-    const finishedList = await listService.finishList(userId, listId)
-    
-    return res.status(httpStatus.OK).send(finishedList);
-  } catch (error) {
-    if(error.name === "InvalidListIdError"){
-      return res.status(httpStatus.NOT_FOUND).send(error.message);
-    }
-    if(error.name === "AlreadyFinishedError"){
-      return res.status(httpStatus.CONFLICT).send(error.message);
-    }
-    return res.status(httpStatus.FORBIDDEN).send(error.message);
-  }
-}
-
 export async function ListDelete(req: AuthenticatedRequest, res: Response) {
   const userId = req.userId;
   const listId = Number(req.params.listId);

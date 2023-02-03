@@ -110,6 +110,16 @@ async function deleteItemByListLocalId(listLocalId: number) {
   })
 }
 
+async function deleteItemsByListId(listId: number) {
+  return prisma.items.deleteMany({
+    where: {
+      ListsLocals: {
+        listId
+      }
+    }
+  })
+}
+
 export type itemParams = Pick<ItemsName, "name">
 
 export type insertItemParams = itemParams & Pick<Items, "quantity" | "unit">
@@ -127,7 +137,8 @@ const itemRepository = {
   updateItemCheck,
   updateItem,
   deleteItem,
-  deleteItemByListLocalId
+  deleteItemByListLocalId,
+  deleteItemsByListId
 };
 
 export default itemRepository;

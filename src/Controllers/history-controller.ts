@@ -11,7 +11,7 @@ export async function allListsHistoryGet(req: AuthenticatedRequest, res: Respons
     
     return res.status(httpStatus.OK).send(userHistoryLists);
   } catch (error) {
-    return res.status(httpStatus.UNAUTHORIZED).send(error.message);
+    return res.status(httpStatus.NOT_FOUND).send(error.message);
   }
 }
 

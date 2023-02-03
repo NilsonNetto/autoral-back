@@ -4,10 +4,26 @@ async function findAllFinishedList(userId: number) {
   return prisma.usersLists.findMany({
     where:{
       userId,
-      shared: true 
+      shared: true,
+      Lists: {
+        finished: true
+      } 
+    },
+    select: {
+      id: true,
+      owner: true,
+      Lists: {
+        select: {
+          id: true,
+          name: true,
+          createdAt: true
+        }
+      }
+    },
+    orderBy: {
+      createdAt: "desc"
     }
   })
-  //aqui falta filtrar se a lista foi terminada ou não
 }
 
 async function findFinishedListByListId(listId: number) {
@@ -15,26 +31,29 @@ async function findFinishedListByListId(listId: number) {
     where: {
       id: listId,
       finished: true
+    },
+    select: {
+      id: true,
+      name: true,
+      createdAt: true,
+      ListsLocals: {
+        select: {
+          id: true,
+          LocalsName: {
+            select: {
+              id: true,
+              name: true,
+            }
+          }
+        }
+      }
     } 
   })
-}
-
-async function findItemHistoryByItemId(userId:number, itemId:number) {
-  return prisma.items.findMany({
-    where:{
-      itemId
-    },
-    include:{
-      ItemName: true,
-    }
-  })
-  //aqui falta filtrar se a lista foi terminada ou não
 }
 
 const historyRepository = {
   findAllFinishedList,
   findFinishedListByListId,
-  findItemHistoryByItemId
 };
 
 export default historyRepository;

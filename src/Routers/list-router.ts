@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { listsGet, listNameGet, listPost, finishListPost, ListDelete } from '@/Controllers';
+import { listsGet, listNameGet, listPost, ListDelete } from '@/Controllers';
 import { authenticateToken, validateBody, validateParams } from '@/Middlewares';
 import { listSchema, listIdSchema } from '@/Schemas';
 
@@ -10,7 +10,6 @@ listRouter
   .get("/", listsGet)
   .get("/:listId", validateParams(listIdSchema), listNameGet)
   .post("/", validateBody(listSchema), listPost)
-  .post("/finish/:listId", validateParams(listIdSchema), finishListPost)
   .delete("/:listId", validateParams(listIdSchema), ListDelete)
 
 export { listRouter };

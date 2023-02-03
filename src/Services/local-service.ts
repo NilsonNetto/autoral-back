@@ -37,7 +37,11 @@ async function updateFinishedLocal(userId: number, listLocalId: number) {
 
   await verifyUserList(userId, listLocal.listId);
 
-  return localRepository.updateFinishedLocal(listLocalId);
+  const updatedLocal = await localRepository.updateFinishedLocal(listLocalId);
+  
+  await verifyFinishList(listLocal.listId);
+
+  return updatedLocal;
 }
 
 async function updateLocalName(userId: number, listLocalId: number, localData: localParams) {
@@ -94,6 +98,16 @@ async function verifyListLocal(listLocalId: number) {
   }
 
   return listLocal;
+}
+
+async function verifyFinishList(listId: number) {
+  const listLocals = await localRepository.findLocalsByListId(listId);
+
+  const filterFinished = listLocals.filter(local => local.finished);
+
+  if(filterFinished.length === listLocals.length)
+
+  return listRepository.updateFinishedList(listId);
 }
 
 async function verifyUserList(userId: number, listId: number) {

@@ -85,6 +85,14 @@ async function deleteListLocal(listLocalId: number) {
   })
 }
 
+async function deleteListLocalsByListId(listId: number) {
+  return prisma.listsLocals.deleteMany({
+    where:{
+      listId
+    }
+  })
+}
+
 export type localParams = Pick<LocalsName, "name">
 
 const localRepository = {
@@ -95,7 +103,8 @@ const localRepository = {
   createListLocal,
   updateFinishedLocal,
   updateLocalName,
-  deleteListLocal
+  deleteListLocal,
+  deleteListLocalsByListId
 };
 
 export default localRepository;

@@ -2,7 +2,9 @@ import { invalidListOwnerError, cannotModifyError } from "@/Errors";
 import { invalidListIdError } from "@/Errors";
 import { alreadyFinishedError } from "@/Errors/already-finished-error";
 import { notFoundDataError } from "@/Errors/not-found-data-error";
+import itemRepository from "@/Repositories/item-repository";
 import listRepository, {listParams} from "@/Repositories/list-repository"
+import localRepository from "@/Repositories/local-repository";
 
 async function findList(userId: number) {
   const userLists = listRepository.findListsByUserId(userId);
@@ -52,13 +54,14 @@ async function finishList(userId: number, listId: number ) {
 }
 
 async function deleteList(userId: number, listId: number ) {
-  const list = await verifyList(listId);
+  await verifyList(listId);
  
-  await verifyOwner(userId, list.id);
-  //vai ter que deletar um monte de outras coisas junto
-  //const deleteList = await listRepository.deleteFinishedList(list.id);
+  await verifyOwner(userId, listId);
 
-  return
+  //fazer transaction disso aqui
+  await itemRepository.deleteItemsByListId(listId);
+  await localRepository.deleteListLocalsByListId(listId);
+  return listRepository.deleteUserLists(listId);
 }
 
 async function verifyList(listId: number) {

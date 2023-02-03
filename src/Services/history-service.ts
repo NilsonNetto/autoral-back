@@ -1,8 +1,12 @@
-import { invalidListOwnerError, invalidUserIdError, cannotFinishListError, invalidListIdError, invalidListStatusError } from "@/Errors";
+import { notFoundDataError } from "@/Errors";
 import historyRepository from "@/Repositories/history-repository";
 
 async function findAllListHistory(userId: number) {
   const allListsHistory = await historyRepository.findAllFinishedList(userId);
+
+  if(!allListsHistory){
+    throw notFoundDataError();
+  }
 
   return allListsHistory;
 }
@@ -10,13 +14,15 @@ async function findAllListHistory(userId: number) {
 async function findListHistory(userId: number, listId: number) {
   const listHistory = await historyRepository.findFinishedListByListId(listId);
 
+  if(!listHistory){
+    throw notFoundDataError();
+  }
+
   return listHistory;
 }
 
 async function findItemHistory(userId: number, itemId: number) {
-  const itemHistory = await historyRepository.findItemHistoryByItemId(userId, itemId);
-
-  return itemHistory;
+  return
 }
 
 const historyService = {
