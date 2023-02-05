@@ -35,6 +35,15 @@ async function createList(userId: number, listData: listParams) {
   return createdList;
 }
 
+async function updateListName(listId: number, listData: listParams) {
+
+  await verifyList(listId);
+  
+  const updatedList = await listRepository.updateListName(listId, listData)
+  
+  return updatedList;
+}
+
 async function finishList(userId: number, listId: number ) {
   const list = await verifyList(listId);
   
@@ -92,6 +101,7 @@ const listService = {
   findList,
   findListById,
   createList,
+  updateListName,
   finishList,
   deleteList
 };

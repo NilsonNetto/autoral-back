@@ -78,6 +78,18 @@ async function createSharedUserList(userId: number, listId: number) {
   })
 }
 
+async function updateListName(listId: number, listName: listParams) {
+  return prisma.lists.update({
+    where: {
+      id: listId
+    },
+    data: {
+      name: listName.name,
+      updatedAt: new Date()
+    }
+  })
+}
+
 async function updateFinishedList(listId: number) {
   return prisma.lists.update({
     where: {
@@ -117,6 +129,7 @@ const listRepository = {
   createList,
   createUserList,
   createSharedUserList,
+  updateListName,
   updateFinishedList,
   deleteSharedUserList,
   deleteUserLists

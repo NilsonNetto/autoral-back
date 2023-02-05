@@ -40,6 +40,19 @@ export async function listPost(req: AuthenticatedRequest, res: Response) {
   }
 }
 
+export async function listPut(req: AuthenticatedRequest, res: Response) {
+  const listId = Number(req.params.listId);
+  const listData: {name: string} = req.body;
+
+  try {
+    const updatedList = await listService.updateListName(listId, listData)
+    
+    return res.status(httpStatus.OK).send(updatedList);
+  } catch (error) {
+    return res.status(httpStatus.NOT_FOUND).send(error.message);
+  }
+}
+
 export async function ListDelete(req: AuthenticatedRequest, res: Response) {
   const userId = req.userId;
   const listId = Number(req.params.listId);
