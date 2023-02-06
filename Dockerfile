@@ -3,6 +3,8 @@ FROM node:18
 WORKDIR /usr/src
 
 COPY package.json .
+COPY tsconfig.json .
+COPY tsconfig.build.json .
 
 EXPOSE 5000
 
@@ -11,6 +13,8 @@ RUN npm i
 COPY . .
 
 RUN npx prisma generate
+
+RUN npm run build
 
 RUN apt-get update && apt-get install -y wget
 
