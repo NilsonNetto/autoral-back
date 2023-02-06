@@ -24,7 +24,10 @@ async function findUserByUserId(id: number) {
 async function findUserByEmail(email: string) {
   return prisma.users.findFirst({
     where: {
-      email
+      email :{
+        contains: email,
+        mode: 'insensitive'
+      }
     }
   })
 }
